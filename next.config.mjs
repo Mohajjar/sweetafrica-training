@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  typescript: { ignoreBuildErrors: true }, // temporary: let Netlify build
-  eslint: { ignoreDuringBuilds: true }, // temporary: let Netlify build
+  images: { unoptimized: true }, // ✅ required for static export
+  typescript: { ignoreBuildErrors: true }, // (temp for Netlify)
+  eslint: { ignoreDuringBuilds: true }, // (temp for Netlify)
 };
 export default nextConfig;

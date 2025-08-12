@@ -1,3 +1,4 @@
+// src/lib/firebase.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -11,6 +12,18 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// IMPORTANT: only initialize in the browser so Netlify build/prerender doesn't touch Firebase
+const isBrowser = typeof window !== "undefined";
+
+const app = isBrowser
+  ? getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig)
+  : undefined;
+
+// We export auth/db as any on the server to avoid crashes during static export.
+// In client components they will be real instances.
+export const auth: any = isBrowser && app ? getAuth(app) : undefined;
+export const db: any = isBrowser && app ? getFirestore(app) : undefined;
+
+export { app };
