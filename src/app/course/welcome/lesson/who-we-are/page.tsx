@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { markLessonComplete } from "@/lib/progress";
+import Link from "next/link";
 
 export default function WhoWeAre() {
   useEffect(() => {
@@ -29,11 +30,11 @@ export default function WhoWeAre() {
               <aside className="md:col-span-1">
                 {/* A placeholder for a future Lesson Navigation component */}
                 <div className="bg-white rounded-xl shadow-sm p-6 border">
-                  <h3 className="font-semibold text-lg mb-4">
+                  <h3 className="font-semibold text-lg mb-4 text-gray-900">
                     Course Progress
                   </h3>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="font-medium text-gray-900">Welcome</li>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="font-medium text-gray-900"></li>
                     <li>Who We Are</li>
                     <li>What We Do</li>
                   </ul>
@@ -99,13 +100,19 @@ export default function WhoWeAre() {
                     communication. The little details done right, every time.
                   </p>
 
-                  <div className="pt-6 mt-6 border-t border-gray-200 flex justify-end">
-                    <a
+                  <div className="pt-6 mt-8 border-t border-gray-200 flex items-center justify-between">
+                    <Link
                       href="/course/welcome"
+                      className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      ← Back to Module
+                    </Link>
+                    <Link
+                      href="/course/welcome/lesson/vision-mission-values"
                       className="inline-flex items-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors text-white px-6 py-3 text-sm font-semibold shadow-md"
                     >
-                      Back to Module →
-                    </a>
+                      Next Lesson →
+                    </Link>
                   </div>
                 </article>
               </main>

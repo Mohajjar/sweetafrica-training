@@ -12,13 +12,11 @@ export default function CourseWelcome() {
   const [percent, setPercent] = useState<number>(0);
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
 
-  // For now we hardcode: this module has 3 lessons total
   const TOTAL_LESSONS = 3;
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (u) => {
       if (!u) return;
-
       const ref = doc(db, "users", u.uid, "progress", "welcome");
       const unsubSnap = onSnapshot(ref, (snap) => {
         const completed = snap.data()?.completedLessonIds ?? [];
@@ -27,12 +25,21 @@ export default function CourseWelcome() {
           Math.min(100, Math.round((completed.length / TOTAL_LESSONS) * 100))
         );
       });
-
       return () => unsubSnap();
     });
-
     return () => unsubAuth();
   }, []);
+
+  // Prerequisites: which lesson must be completed to unlock the next
+  const prereq: Record<string, string | null> = {
+    "who-we-are": null,
+    "vision-mission-values": "who-we-are",
+    "expectations-communication": "vision-mission-values",
+  };
+  const isUnlocked = (id: string) => {
+    const need = prereq[id];
+    return need ? completedLessonIds.includes(need) : true;
+  };
 
   const lessons = [
     {
@@ -49,7 +56,7 @@ export default function CourseWelcome() {
       title: "Vision, Mission & Core Values",
       description:
         "Discover the principles and goals that drive our everyday work.",
-      link: null, // This lesson is not available yet
+      link: "/course/welcome/lesson/vision-mission-values",
     },
     {
       id: "expectations-communication",
@@ -57,9 +64,9 @@ export default function CourseWelcome() {
       title: "Expectations & Communication",
       description:
         "Understand how we work together and deliver outstanding service.",
-      link: null, // This lesson is not available yet
+      link: "/course/welcome/lesson/expectations-communication",
     },
-  ];
+  ] as const;
 
   return (
     <AuthGuard>
@@ -82,39 +89,42 @@ export default function CourseWelcome() {
 
           {/* Lessons Grid */}
           <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {lessons.map((lesson) => (
-              <article
-                key={lesson.id}
-                className={`relative rounded-2xl border bg-white p-6 shadow-sm transition-all
-                  ${lesson.link ? "hover:shadow-lg" : ""}`}
-              >
-                <div className="text-xs font-semibold text-gray-500 mb-1">
-                  {lesson.module}
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900">
-                  {lesson.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                  {lesson.description}
-                </p>
+            {lessons.map((lesson) => {
+              const unlocked = isUnlocked(lesson.id);
+              const isDone = completedLessonIds.includes(lesson.id);
 
-                {lesson.link ? (
-                  <Link
-                    href={lesson.link}
-                    className="inline-block rounded-full bg-green-500 hover:bg-green-600 transition-colors text-white px-5 py-2 text-sm font-semibold shadow-md"
-                  >
-                    {completedLessonIds.includes(lesson.id)
-                      ? "View Lesson"
-                      : "Start Lesson"}{" "}
-                    →
-                  </Link>
-                ) : (
-                  <span className="inline-block text-sm text-gray-500 font-medium bg-gray-100 rounded-full px-4 py-2">
-                    Coming Soon
-                  </span>
-                )}
-              </article>
-            ))}
+              return (
+                <article
+                  key={lesson.id}
+                  className={`relative rounded-2xl border bg-white p-6 shadow-sm transition-all ${
+                    unlocked ? "hover:shadow-lg" : ""
+                  }`}
+                >
+                  <div className="text-xs font-semibold text-gray-500 mb-1">
+                    {lesson.module}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900">
+                    {lesson.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    {lesson.description}
+                  </p>
+
+                  {unlocked ? (
+                    <Link
+                      href={lesson.link}
+                      className="inline-block rounded-full bg-green-500 hover:bg-green-600 transition-colors text-white px-5 py-2 text-sm font-semibold shadow-md"
+                    >
+                      {isDone ? "View Lesson" : "Start Lesson"} →
+                    </Link>
+                  ) : (
+                    <span className="inline-block text-sm text-gray-500 font-medium bg-gray-100 rounded-full px-4 py-2">
+                      Locked — complete previous lesson
+                    </span>
+                  )}
+                </article>
+              );
+            })}
           </section>
         </Shell>
       </div>
