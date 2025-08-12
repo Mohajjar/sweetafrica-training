@@ -1,19 +1,7 @@
-The Netlify deploy errored, with the following guidance provided:
+[build]
+  command = "npm run build"
+  publish = ".next"
+  functions = "netlify/functions"
 
-**Diagnosis:**
-The build failed because it was unable to fetch cached dependencies, which resulted in no cached dependencies being found, triggering the setup to clone a fresh repository and install dependencies.
-
-**Solution:**
-Given that the build was unable to fetch cached dependencies, ensure that all required dependencies are included in the `package.json` file and that any necessary files are present and committed to the repository. By verifying the presence of the required dependencies and files in the repository, you can help avoid dependency-fetching issues during the build process.
-
-The relevant error logs are:
-
-Line 0: build-image version: 71a98eb82b055b934e7d58946f59957e90f5a76f (noble)
-Line 1: buildbot version: 72ba091da8478e084b7407a21cd8435e7ecab808
-Line 2: Fetching cached dependencies
-Line 3: Failed to fetch cache, continuing with build
-Line 4: Starting to prepare the repo for build
-Line 5: No cached dependencies found. Cloning fresh repo
-Line 6: git clone --filter=blob:none https://github.com/Mohajjar/sweetafrica-training
-Line 7: Preparing Git Reference refs/heads/main
-Line 8: Starting to install dependencies
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
