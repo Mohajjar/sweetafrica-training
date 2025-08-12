@@ -2,17 +2,55 @@
 import AuthGuard from "@/components/AuthGuard";
 import Shell from "@/components/Shell";
 import Link from "next/link";
-import { FaPlay, FaCheckCircle } from "react-icons/fa"; // Importing icons for a more visual design
+import { FaPlay, FaCheckCircle } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { auth, db } from "@/lib/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+
+const TOTAL_LESSONS = 3;
+const LESSON_LABEL: Record<string, string> = {
+  "who-we-are": "Who We Are",
+  "vision-mission-values": "Vision, Mission & Core Values",
+  "expectations-communication": "Expectations & Communication",
+};
 
 export default function Dashboard() {
-  // Hardcoded for demonstration, but this would be dynamic data
-  const courseStatus = {
+  const [courseStatus, setCourseStatus] = useState({
     title: "Welcome to Sweet Africa Global",
-    lastLesson: "Who We Are",
-    progress: 33, // Example: 1 out of 3 lessons complete
+    lastLesson: "Not started",
+    progress: 0,
     isCompleted: false,
     link: "/course/welcome",
-  };
+  });
+
+  useEffect(() => {
+    // Wait for auth, then listen to user's progress doc
+    const unsubAuth = onAuthStateChanged(auth, (u) => {
+      if (!u) return;
+
+      const ref = doc(db, "users", u.uid, "progress", "welcome");
+      const unsubSnap = onSnapshot(ref, (snap) => {
+        const done = (snap.data()?.completedLessonIds ?? []) as string[];
+        const progress = Math.min(
+          100,
+          Math.round((done.length / TOTAL_LESSONS) * 100)
+        );
+        const last = done.length ? done[done.length - 1] : null;
+
+        setCourseStatus((prev) => ({
+          ...prev,
+          lastLesson: last ? LESSON_LABEL[last] ?? last : "Not started",
+          progress,
+          isCompleted: progress === 100,
+        }));
+      });
+
+      return () => unsubSnap();
+    });
+
+    return () => unsubAuth();
+  }, []);
 
   return (
     <AuthGuard>
@@ -45,11 +83,21 @@ export default function Dashboard() {
                   <FaPlay className="text-green-500 text-3xl mt-1" />
                 )}
               </div>
+
               <p className="mt-4 text-gray-600">
-                You last worked on:{" "}
-                <span className="font-medium text-gray-800">
-                  {courseStatus.lastLesson}
-                </span>
+                {courseStatus.progress > 0 ? (
+                  <>
+                    You last worked on:{" "}
+                    <span className="font-medium text-gray-800">
+                      {courseStatus.lastLesson}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    You haven’t started yet. Begin with{" "}
+                    <span className="font-medium">Who We Are</span>.
+                  </>
+                )}
               </p>
 
               <div className="mt-6">
@@ -57,7 +105,7 @@ export default function Dashboard() {
                   <div
                     className="bg-green-500 h-2.5 rounded-full transition-all duration-500"
                     style={{ width: `${courseStatus.progress}%` }}
-                  ></div>
+                  />
                 </div>
                 <div className="flex justify-between text-sm mt-2 text-gray-600">
                   <span>Progress</span>
@@ -69,7 +117,9 @@ export default function Dashboard() {
                 href={courseStatus.link}
                 className="mt-6 inline-flex items-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors text-white px-6 py-3 text-sm font-semibold shadow-md"
               >
-                {courseStatus.isCompleted ? "View Course" : "Continue Training"}{" "}
+                {courseStatus.progress > 0
+                  ? "Continue Training"
+                  : "Start Training"}{" "}
                 →
               </Link>
             </div>
