@@ -8,14 +8,25 @@ import { onAuthStateChanged } from "firebase/auth";
 import { markLessonComplete } from "@/lib/progress";
 import Link from "next/link"; // Use Link for the back button
 import CourseTracker from "@/components/CourseTracker";
+import useLessonGate from "@/hooks/useLessonGate";
 
 export default function ExpectationsCommunication() {
-  const router = useRouter();
-  const [uid, setUid] = useState<string | null>(null);
-  const [ack, setAck] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const canFinish = ack && !!uid && !saving;
+  // Gate: must have completed Lessons 1 and 2
+  useLessonGate({
+    moduleId: "welcome",
+    requireCompleted: ["who-we-are", "vision-mission-values"],
+  });
 
+  const router = useRouter();
+
+  // Local state
+  const [uid, setUid] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [ack, setAck] = useState(false);
+
+  const canFinish = ack && !saving;
+
+  // Track signed-in user id for writes
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
     return () => unsub();
@@ -38,7 +49,7 @@ export default function ExpectationsCommunication() {
         <div className="bg-gray-50 min-h-screen">
           <div className="container mx-auto px-4 py-8 md:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {/* Left Column (Placeholder) */}
+              {/* Left Column: Tracker */}
               <aside className="md:col-span-1">
                 <CourseTracker
                   moduleId="welcome"

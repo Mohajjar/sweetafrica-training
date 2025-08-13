@@ -8,16 +8,13 @@ import { markLessonComplete } from "@/lib/progress";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CourseTracker from "@/components/CourseTracker";
+import useLessonGate from "@/hooks/useLessonGate";
 
 export default function VisionMissionValues() {
-  const router = useRouter();
-  const handleBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back(); // go to the real previous page
-    } else {
-      router.push("/course/welcome"); // fallback if user opened this page directly
-    }
-  };
+  useLessonGate({
+    moduleId: "welcome",
+    requireCompleted: ["who-we-are"],
+  });
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
