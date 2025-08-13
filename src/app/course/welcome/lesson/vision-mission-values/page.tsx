@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { markLessonComplete } from "@/lib/progress";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CourseTracker from "@/components/CourseTracker";
 
 export default function VisionMissionValues() {
   const router = useRouter();
@@ -34,18 +35,27 @@ export default function VisionMissionValues() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {/* Left Column (Navigation) */}
               <aside className="md:col-span-1">
-                {/* Course Progress Sidebar */}
-                <div className="bg-white rounded-xl shadow-sm p-6 border">
-                  <h3 className="font-semibold text-lg mb-4 text-gray-900">
-                    Course Progress
-                  </h3>
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    <li>Who We Are</li>
-                    <li className="font-medium text-gray-900">
-                      Vision, Mission & Core Values
-                    </li>
-                  </ul>
-                </div>
+                <CourseTracker
+                  moduleId="welcome"
+                  currentLessonId="vision-mission-values"
+                  lessons={[
+                    {
+                      id: "who-we-are",
+                      title: "Who We Are",
+                      href: "/course/welcome/lesson/who-we-are",
+                    },
+                    {
+                      id: "vision-mission-values",
+                      title: "Vision, Mission & Core Values",
+                      href: "/course/welcome/lesson/vision-mission-values",
+                    },
+                    {
+                      id: "expectations-communication",
+                      title: "Expectations & Communication",
+                      href: "/course/welcome/lesson/expectations-communication",
+                    },
+                  ]}
+                />
               </aside>
 
               {/* Right Column (Lesson Content) */}

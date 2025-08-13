@@ -12,6 +12,7 @@ export default function CourseWelcome() {
   const [percent, setPercent] = useState<number>(0);
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
 
+  // This course has 3 lessons
   const TOTAL_LESSONS = 3;
 
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function CourseWelcome() {
       if (!u) return;
       const ref = doc(db, "users", u.uid, "progress", "welcome");
       const unsubSnap = onSnapshot(ref, (snap) => {
-        const completed = snap.data()?.completedLessonIds ?? [];
+        const completed = (snap.data()?.completedLessonIds ?? []) as string[];
         setCompletedLessonIds(completed);
         setPercent(
           Math.min(100, Math.round((completed.length / TOTAL_LESSONS) * 100))
@@ -30,7 +31,7 @@ export default function CourseWelcome() {
     return () => unsubAuth();
   }, []);
 
-  // Prerequisites: which lesson must be completed to unlock the next
+  // Gating logic: each lesson unlocks when the previous one is completed
   const prereq: Record<string, string | null> = {
     "who-we-are": null,
     "vision-mission-values": "who-we-are",
@@ -125,6 +126,39 @@ export default function CourseWelcome() {
                 </article>
               );
             })}
+
+            {/* FINAL QUIZ — one card for the whole course */}
+            {completedLessonIds.length >= 3 ? (
+              <article className="relative rounded-2xl border bg-white p-6 shadow-sm transition-all hover:shadow-lg">
+                <div className="text-xs font-semibold text-gray-500 mb-1">
+                  Section 1
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-gray-900">Quiz</h3>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  Take the final quiz of Section 1 to complete the course and
+                  record your certification.
+                </p>
+                <Link
+                  href="/course/welcome/quiz"
+                  className="inline-block rounded-full bg-green-600 hover:bg-green-700 transition-colors text-white px-5 py-2 text-sm font-semibold shadow-md"
+                >
+                  Take Quiz →
+                </Link>
+              </article>
+            ) : (
+              <article className="relative rounded-2xl border bg-white p-6 shadow-sm">
+                <div className="text-xs font-semibold text-gray-500 mb-1">
+                  Section 1
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-gray-900">Quiz</h3>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  Locked — complete all lessons to unlock the quiz.
+                </p>
+                <span className="inline-block text-sm text-gray-500 font-medium bg-gray-100 rounded-full px-4 py-2">
+                  Locked
+                </span>
+              </article>
+            )}
           </section>
         </Shell>
       </div>

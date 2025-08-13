@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import WelcomeQuizTile from "@/components/WelcomeQuizTile";
 
 const TOTAL_LESSONS = 3;
 const LESSON_LABEL: Record<string, string> = {
@@ -25,7 +26,6 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    // Wait for auth, then listen to user's progress doc
     const unsubAuth = onAuthStateChanged(auth, (u) => {
       if (!u) return;
 
@@ -124,10 +124,8 @@ export default function Dashboard() {
               </Link>
             </div>
 
-            {/* Other cards can go here */}
-            <div className="bg-white rounded-xl shadow-md border p-6 md:p-8 flex flex-col items-center justify-center text-center text-gray-500">
-              <p className="text-lg">More features and courses coming soon!</p>
-            </div>
+            {/* Final Quiz tile (single quiz for the whole course) */}
+            <WelcomeQuizTile />
           </div>
         </section>
       </Shell>
