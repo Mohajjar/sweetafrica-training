@@ -13,18 +13,15 @@ export default function WelcomeQuizTile() {
   const [quizPassed, setQuizPassed] = useState<boolean>(false);
   const [lastPercent, setLastPercent] = useState<number | null>(null);
 
-  // Track the current user
+  // Track current user
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUid(u?.uid ?? null);
-    });
+    const unsub = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
     return () => unsub();
   }, []);
 
-  // Subscribe to progress + quiz docs for this user
+  // Subscribe to progress + quiz meta
   useEffect(() => {
     if (!uid) {
-      // If no user yet, show loading skeleton
       setLoading(true);
       setLessonsDone(0);
       setQuizPassed(false);
@@ -39,10 +36,10 @@ export default function WelcomeQuizTile() {
     let unsubQuiz: Unsubscribe | null = null;
 
     unsubProg = onSnapshot(progRef, (snap) => {
-      const done = Array.isArray(snap.data()?.completedLessonIds)
-        ? (snap.data()!.completedLessonIds as unknown[]).length
-        : 0;
-      setLessonsDone(done);
+      const doneArr = Array.isArray(snap.data()?.completedLessonIds)
+        ? (snap.data()!.completedLessonIds as unknown[])
+        : [];
+      setLessonsDone(doneArr.length);
       setLoading(false);
     });
 
@@ -50,11 +47,10 @@ export default function WelcomeQuizTile() {
       const data = snap.data() as
         | { passed?: boolean; last?: { percent?: number } }
         | undefined;
-
       setQuizPassed(Boolean(data?.passed));
-      const pct =
-        typeof data?.last?.percent === "number" ? data!.last!.percent : null;
-      setLastPercent(pct);
+      setLastPercent(
+        typeof data?.last?.percent === "number" ? data!.last!.percent : null
+      );
     });
 
     return () => {
@@ -76,13 +72,13 @@ export default function WelcomeQuizTile() {
 
   return (
     <div className="bg-white rounded-xl shadow-md border p-6 md:p-8">
-      <div className="text-xs font-semibold text-gray-500 mb-1">Final</div>
-      <h4 className="text-lg font-bold text-gray-900 mb-2">Final Quiz</h4>
+      <div className="text-xs font-semibold text-gray-500 mb-1">Section 1</div>
+      <h4 className="text-lg font-bold text-gray-900 mb-2">Section 1 - Quiz</h4>
 
       {!unlocked ? (
         <>
           <p className="text-sm text-gray-600 mb-4">
-            Locked — complete all lessons to unlock the quiz.
+            Locked — complete all lessons in Section 1 to unlock the quiz.
           </p>
           <span className="inline-block text-sm text-gray-500 font-medium bg-gray-100 rounded-full px-4 py-2">
             Locked
@@ -92,12 +88,18 @@ export default function WelcomeQuizTile() {
         <>
           <p className="text-sm text-gray-600 mb-4">
             Passed{lastPercent != null ? ` — last score ${lastPercent}%` : ""}.
-            You can review or retake anytime.
+            You can view your certificate or retake the quiz anytime.
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center rounded-full bg-green-100 text-green-700 px-3 py-1 text-xs font-semibold">
               ✓ Passed
             </span>
+            <Link
+              href="/course/welcome/quiz/success"
+              className="inline-flex items-center rounded-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-800 px-5 py-2 text-sm font-semibold shadow"
+            >
+              View Certificate
+            </Link>
             <Link
               href="/course/welcome/quiz"
               className="inline-flex items-center rounded-full bg-green-600 hover:bg-green-700 text-white px-5 py-2 text-sm font-semibold shadow"
@@ -109,7 +111,7 @@ export default function WelcomeQuizTile() {
       ) : (
         <>
           <p className="text-sm text-gray-600 mb-4">
-            Take the final quiz to complete the course and record your
+            Take the Section 1 quiz to complete this section and record your
             certification.
           </p>
           <Link

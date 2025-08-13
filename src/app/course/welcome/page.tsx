@@ -11,24 +11,40 @@ import { onAuthStateChanged } from "firebase/auth";
 export default function CourseWelcome() {
   const [percent, setPercent] = useState<number>(0);
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
+  const [quizPassed, setQuizPassed] = useState<boolean>(false);
 
   // This course has 3 lessons
   const TOTAL_LESSONS = 3;
 
   useEffect(() => {
+    let unsubProg: (() => void) | null = null;
+    let unsubQuiz: (() => void) | null = null;
+
     const unsubAuth = onAuthStateChanged(auth, (u) => {
       if (!u) return;
-      const ref = doc(db, "users", u.uid, "progress", "welcome");
-      const unsubSnap = onSnapshot(ref, (snap) => {
+
+      // Progress listener
+      const progRef = doc(db, "users", u.uid, "progress", "welcome");
+      unsubProg = onSnapshot(progRef, (snap) => {
         const completed = (snap.data()?.completedLessonIds ?? []) as string[];
         setCompletedLessonIds(completed);
         setPercent(
           Math.min(100, Math.round((completed.length / TOTAL_LESSONS) * 100))
         );
       });
-      return () => unsubSnap();
+
+      // Quiz meta listener (to know if they passed already)
+      const quizRef = doc(db, "users", u.uid, "quizzes", "welcome");
+      unsubQuiz = onSnapshot(quizRef, (snap) => {
+        setQuizPassed(Boolean(snap.data()?.passed));
+      });
     });
-    return () => unsubAuth();
+
+    return () => {
+      unsubAuth();
+      if (unsubProg) unsubProg();
+      if (unsubQuiz) unsubQuiz();
+    };
   }, []);
 
   // Gating logic: each lesson unlocks when the previous one is completed
@@ -75,14 +91,27 @@ export default function CourseWelcome() {
         <Shell>
           {/* Hero Section */}
           <section className="rounded-3xl border bg-white p-8 md:p-12 shadow-sm mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
-              Welcome to{" "}
-              <span className="text-green-600">Sweet Africa Global</span>
-            </h1>
-            <p className="mt-2 text-gray-600 max-w-2xl text-lg font-light">
-              This onboarding will guide you through our values, expectations,
-              and everything you need to excel as part of our team.
-            </p>
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
+                  Welcome to{" "}
+                  <span className="text-green-600">Sweet Africa Global</span>
+                </h1>
+                <p className="mt-2 text-gray-600 max-w-2xl text-lg font-light">
+                  This onboarding will guide you through our values,
+                  expectations, and everything you need to excel as part of our
+                  team.
+                </p>
+              </div>
+
+              {/* Small badge when quiz is passed */}
+              {quizPassed && (
+                <span className="inline-flex h-fit items-center rounded-full bg-green-100 text-green-700 px-3 py-1 text-sm font-semibold border border-green-200">
+                  ✓ Certificate earned
+                </span>
+              )}
+            </div>
+
             <div className="mt-6 md:mt-8">
               <ProgressBar percent={percent} />
             </div>
@@ -127,30 +156,53 @@ export default function CourseWelcome() {
               );
             })}
 
-            {/* FINAL QUIZ — one card for the whole course */}
+            {/* SECTION 1 - QUIZ — one card for the whole course */}
             {completedLessonIds.length >= 3 ? (
               <article className="relative rounded-2xl border bg-white p-6 shadow-sm transition-all hover:shadow-lg">
                 <div className="text-xs font-semibold text-gray-500 mb-1">
                   Section 1
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900">Quiz</h3>
+                <h3 className="text-xl font-bold mb-2 text-gray-900">
+                  Section 1 - Quiz
+                </h3>
                 <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                  Take the final quiz of Section 1 to complete the course and
-                  record your certification.
+                  {quizPassed
+                    ? "You passed the Section 1 quiz. You can view your certificate or retake anytime."
+                    : "Take the Section 1 quiz to complete the course and record your certification."}
                 </p>
-                <Link
-                  href="/course/welcome/quiz"
-                  className="inline-block rounded-full bg-green-600 hover:bg-green-700 transition-colors text-white px-5 py-2 text-sm font-semibold shadow-md"
-                >
-                  Take Quiz →
-                </Link>
+
+                {quizPassed ? (
+                  <div className="flex flex-wrap gap-3">
+                    <Link
+                      href="/course/welcome/quiz/success"
+                      className="inline-flex items-center rounded-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-800 px-5 py-2 text-sm font-semibold shadow"
+                    >
+                      View Certificate
+                    </Link>
+                    <Link
+                      href="/course/welcome/quiz"
+                      className="inline-flex items-center rounded-full bg-green-600 hover:bg-green-700 transition-colors text-white px-5 py-2 text-sm font-semibold shadow"
+                    >
+                      Review / Retake →
+                    </Link>
+                  </div>
+                ) : (
+                  <Link
+                    href="/course/welcome/quiz"
+                    className="inline-block rounded-full bg-green-600 hover:bg-green-700 transition-colors text-white px-5 py-2 text-sm font-semibold shadow-md"
+                  >
+                    Take Quiz →
+                  </Link>
+                )}
               </article>
             ) : (
               <article className="relative rounded-2xl border bg-white p-6 shadow-sm">
                 <div className="text-xs font-semibold text-gray-500 mb-1">
                   Section 1
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900">Quiz</h3>
+                <h3 className="text-xl font-bold mb-2 text-gray-900">
+                  Section 1 - Quiz
+                </h3>
                 <p className="text-sm text-gray-600 mb-4 leading-relaxed">
                   Locked — complete all lessons to unlock the quiz.
                 </p>

@@ -23,13 +23,10 @@ export default function WelcomeQuizPage() {
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (!u) return router.replace("/login");
       setUid(u.uid);
-      // gate: need 3 completed lessons
       const ref = doc(db, "users", u.uid, "progress", "welcome");
       const snap = await getDoc(ref);
       const completed = (snap.data()?.completedLessonIds ?? []) as string[];
-      if ((completed?.length ?? 0) < 3) {
-        setBlocked(true);
-      }
+      if ((completed?.length ?? 0) < 3) setBlocked(true);
       setReady(true);
     });
     return () => unsub();
@@ -51,7 +48,7 @@ export default function WelcomeQuizPage() {
       total,
       passed: true,
     });
-    router.push("/course/welcome"); // or show a “certificate” page next
+    router.push("/course/welcome/quiz/success");
   };
 
   const handleFail = async ({
@@ -70,7 +67,7 @@ export default function WelcomeQuizPage() {
       total,
       passed: false,
     });
-    // stay on page so they can retake
+    // Stay on page; user can hit Retake in the Quiz component
   };
 
   return (
@@ -79,7 +76,7 @@ export default function WelcomeQuizPage() {
         <Shell>
           <div className="container mx-auto px-4 py-8 md:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {/* Left: tracker */}
+              {/* Left: tracker (lessons only) */}
               <aside className="md:col-span-1">
                 <CourseTracker
                   moduleId="welcome"
@@ -103,19 +100,19 @@ export default function WelcomeQuizPage() {
                   ]}
                 />
                 <div className="mt-4 text-xs text-gray-500">
-                  Final Quiz (not counted as a lesson)
+                  Section 1 - Quiz (not counted as a lesson)
                 </div>
               </aside>
 
-              {/* Right: quiz card */}
+              {/* Right: quiz */}
               <main className="md:col-span-3">
                 <article className="bg-white rounded-xl shadow-md border p-6 md:p-10">
                   <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-gray-900">
-                      Quiz Section 1 — Welcome Module
+                      Section 1 - Quiz
                     </h1>
                     <Link href="/course/welcome" className="text-sm underline">
-                      ← Back to Module
+                      ← Back to Section 1
                     </Link>
                   </div>
 
@@ -125,7 +122,7 @@ export default function WelcomeQuizPage() {
                     <div className="mt-6 rounded-xl border p-4 bg-yellow-50 text-yellow-800">
                       Please complete all lessons first.{" "}
                       <Link href="/course/welcome" className="underline">
-                        Go to module
+                        Go to Section 1
                       </Link>
                     </div>
                   ) : (
