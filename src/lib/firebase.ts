@@ -1,7 +1,11 @@
 // src/lib/firebase.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -12,18 +16,29 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-// IMPORTANT: only initialize in the browser so Netlify build/prerender doesn't touch Firebase
 const isBrowser = typeof window !== "undefined";
 
+// Initialize app first
 const app = isBrowser
-  ? getApps().length
-    ? getApp()
-    : initializeApp(firebaseConfig)
+  ? getApps()[0] ?? initializeApp(firebaseConfig)
   : undefined;
 
-// We export auth/db as any on the server to avoid crashes during static export.
-// In client components they will be real instances.
+// Safe exports for SSR/static export
 export const auth: any = isBrowser && app ? getAuth(app) : undefined;
-export const db: any = isBrowser && app ? getFirestore(app) : undefined;
+
+export const db: any =
+  isBrowser && app
+    ? initializeFirestore(app, {
+        // Auto-detects when fetch streaming is blocked (AdBlock/VPN/proxy)
+        experimentalAutoDetectLongPolling: true,
+        // If you still have issues, use the stronger option instead:
+        // experimentalForceLongPolling: true,
+
+        // Durable local cache + multi-tab coordination
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager(),
+        }),
+      })
+    : undefined;
 
 export { app };
