@@ -99,9 +99,25 @@ export default function LoginPage() {
           }
         );
 
-        // Send email verification and redirect to /verify
+        // Send verification email with safe fallback
         const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-        await sendEmailVerification(cred.user, { url: `${site}/verify` });
+
+        try {
+          await sendEmailVerification(cred.user, { url: `${site}/verify` });
+        } catch (e: any) {
+          console.error("sendEmailVerification failed:", e?.code, e?.message);
+          // If the continue URL isn't authorized yet, still send a basic verification email
+          if (
+            e?.code === "auth/invalid-continue-uri" ||
+            e?.code === "auth/unauthorized-continue-uri"
+          ) {
+            await sendEmailVerification(cred.user);
+          } else {
+            throw e; // bubble up any other error
+          }
+        }
+
+        // Then redirect to the verify screen
         window.location.href = "/verify";
         return;
       } else {
