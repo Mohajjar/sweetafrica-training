@@ -3,36 +3,12 @@
 import AuthGuard from "@/components/AuthGuard";
 import Shell from "@/components/Shell";
 import CourseTracker from "@/components/CourseTracker";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { markLessonComplete } from "@/lib/progress";
-import { useRouter } from "next/navigation";
+import LessonFooter from "@/components/LessonFooter";
+import useAutoGate from "@/hooks/useAutoGate";
+import { getLessons } from "@/lib/modules";
 
 export default function DefiningCleaning() {
-  const router = useRouter();
-  const [uid, setUid] = useState<string | null>(null);
-  const [ack, setAck] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
-    return () => unsub();
-  }, []);
-
-  const canFinish = ack && !!uid;
-
-  const handleFinish = async () => {
-    if (!canFinish || !uid) return;
-    setSaving(true);
-    try {
-      await markLessonComplete(uid, "fundamentals", "defining-cleaning");
-      router.push("/course/fundamentals");
-    } finally {
-      setSaving(false);
-    }
-  };
+  useAutoGate("fundamentals", "defining-cleaning");
 
   return (
     <AuthGuard>
@@ -45,13 +21,7 @@ export default function DefiningCleaning() {
                 <CourseTracker
                   moduleId="fundamentals"
                   currentLessonId="defining-cleaning"
-                  lessons={[
-                    {
-                      id: "defining-cleaning",
-                      title: "Defining Cleaning",
-                      href: "/course/fundamentals/lesson/defining-cleaning",
-                    },
-                  ]}
+                  lessons={getLessons("fundamentals")}
                 />
               </aside>
 
@@ -208,40 +178,12 @@ export default function DefiningCleaning() {
                     the standard for professional quality.
                   </p>
 
-                  {/* Acknowledge + actions */}
-                  <div className="pt-6 mt-8 border-t border-gray-200">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={ack}
-                        onChange={(e) => setAck(e.target.checked)}
-                        className="mt-1 h-5 w-5 rounded text-green-500 focus:ring-green-500 border-gray-300"
-                      />
-                      <span className="text-sm text-gray-700 leading-6">
-                        I’ve read and understood this lesson.
-                      </span>
-                    </label>
-
-                    <div className="mt-6 flex items-center justify-between">
-                      <Link
-                        href="/course/fundamentals"
-                        className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        ← Back to Module
-                      </Link>
-                      <button
-                        onClick={handleFinish}
-                        disabled={!canFinish}
-                        className={`inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold shadow-md transition-colors ${
-                          canFinish
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        }`}
-                      >
-                        {saving ? "Saving…" : "Done — Return to Module →"}
-                      </button>
-                    </div>
-                  </div>
+                  <LessonFooter
+                    moduleId="fundamentals"
+                    lessonId="defining-cleaning"
+                    requireAck={true}
+                    ackLabel="I’ve read and understood this lesson."
+                  />
                 </article>
               </main>
             </div>

@@ -9,8 +9,12 @@ import { markLessonComplete } from "@/lib/progress";
 import Link from "next/link"; // Use Link for the back button
 import CourseTracker from "@/components/CourseTracker";
 import useLessonGate from "@/hooks/useLessonGate";
+import useAutoGate from "@/hooks/useAutoGate";
+import LessonFooter from "@/components/LessonFooter";
+import { getLessons } from "@/lib/modules";
 
 export default function ExpectationsCommunication() {
+  useAutoGate("welcome", "expectations-communication");
   // Gate: must have completed Lessons 1 and 2
   useLessonGate({
     moduleId: "welcome",
@@ -54,23 +58,7 @@ export default function ExpectationsCommunication() {
                 <CourseTracker
                   moduleId="welcome"
                   currentLessonId="expectations-communication"
-                  lessons={[
-                    {
-                      id: "who-we-are",
-                      title: "Who We Are",
-                      href: "/course/welcome/lesson/who-we-are",
-                    },
-                    {
-                      id: "vision-mission-values",
-                      title: "Vision, Mission & Core Values",
-                      href: "/course/welcome/lesson/vision-mission-values",
-                    },
-                    {
-                      id: "expectations-communication",
-                      title: "Expectations & Communication",
-                      href: "/course/welcome/lesson/expectations-communication",
-                    },
-                  ]}
+                  lessons={getLessons("welcome")}
                 />
               </aside>
 
@@ -144,40 +132,12 @@ export default function ExpectationsCommunication() {
                     </p>
                   </div>
 
-                  <div className="pt-6 mt-8 border-t border-gray-200">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={ack}
-                        onChange={(e) => setAck(e.target.checked)}
-                        className="mt-1 h-5 w-5 rounded text-green-500 focus:ring-green-500 border-gray-300"
-                      />
-                      <span className="text-sm text-gray-700 leading-6">
-                        I acknowledge I’ve read and understood the expectations
-                        and communication standards.
-                      </span>
-                    </label>
-
-                    <div className="mt-6 flex items-center justify-between">
-                      <Link
-                        href="/course/welcome/lesson/vision-mission-values"
-                        className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        ← Back
-                      </Link>
-                      <button
-                        onClick={handleFinish}
-                        disabled={!canFinish}
-                        className={`inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold shadow-md transition-colors ${
-                          canFinish
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        }`}
-                      >
-                        {saving ? "Saving…" : "I acknowledge & finish module →"}
-                      </button>
-                    </div>
-                  </div>
+                  <LessonFooter
+                    moduleId="welcome"
+                    lessonId="expectations-communication"
+                    requireAck={true}
+                    ackLabel="I acknowledge I’ve read and understood the expectations and communication standards."
+                  />
                 </article>
               </main>
             </div>

@@ -1,0 +1,129 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import ProgressBar from "@/components/ProgressBar";
+import Shell from "@/components/Shell";
+import AuthGuard from "@/components/AuthGuard";
+import { moduleTitle, getLessons } from "@/lib/modules";
+import type { ModuleId } from "@/lib/modules";
+import { getTotalLessons } from "@/lib/curriculum";
+
+export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
+  const [percent, setPercent] = useState(0);
+  const [completed, setCompleted] = useState<string[]>([]);
+
+  useEffect(() => {
+    const unsubAuth = onAuthStateChanged(auth, (u) => {
+      if (!u) return;
+      const ref = doc(db, "users", u.uid, "progress", moduleId);
+      const unsubSnap = onSnapshot(ref, (snap) => {
+        const done = snap.data()?.completedLessonIds ?? [];
+        setCompleted(done);
+        const total = getTotalLessons(moduleId);
+        setPercent(
+          total ? Math.min(100, Math.round((done.length / total) * 100)) : 0
+        );
+      });
+      return () => unsubSnap();
+    });
+    return () => unsubAuth();
+  }, [moduleId]);
+
+  const lessons = getLessons(moduleId);
+
+  // ✅ Quiz availability + completion check
+  const hasQuiz: Record<ModuleId, boolean> = {
+    welcome: true,
+    fundamentals: true, // set to false for modules without a quiz yet
+  };
+  const total = getTotalLessons(moduleId);
+  const isComplete = total ? completed.length >= total : false;
+
+  return (
+    <AuthGuard>
+      <div className="bg-gray-50 min-h-screen">
+        <Shell>
+          <section className="rounded-3xl border bg-white p-8 md:p-12 shadow-sm mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
+              {moduleTitle[moduleId]}
+            </h1>
+            <p className="mt-2 text-gray-600 max-w-2xl text-lg font-light">
+              Your progress through this section.
+            </p>
+            <div className="mt-6 md:mt-8">
+              <ProgressBar percent={percent} />
+            </div>
+          </section>
+
+          <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {lessons.map((l) => (
+              <article
+                key={l.id}
+                className={`relative rounded-2xl border bg-white p-6 shadow-sm transition-all ${
+                  l.href ? "hover:shadow-lg" : ""
+                }`}
+              >
+                <div className="text-xs font-semibold text-gray-500 mb-1">
+                  Lesson {lessons.findIndex((x) => x.id === l.id) + 1}
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-gray-900">
+                  {l.title}
+                </h3>
+                {l.href ? (
+                  <Link
+                    href={l.href}
+                    className="inline-block rounded-full bg-green-500 hover:bg-green-600 transition-colors text-white px-5 py-2 text-sm font-semibold shadow-md"
+                  >
+                    {completed.includes(l.id) ? "View Lesson" : "Start Lesson"}{" "}
+                    →
+                  </Link>
+                ) : (
+                  <span className="inline-block text-sm text-gray-500 font-medium bg-gray-100 rounded-full px-4 py-2">
+                    Coming Soon
+                  </span>
+                )}
+              </article>
+            ))}
+          </section>
+
+          {/* ✅ Section Quiz CTA (locked until all lessons complete) */}
+          {hasQuiz[moduleId] && (
+            <section className="mt-8">
+              <div className="rounded-2xl border bg-white p-6 md:p-8 shadow-sm flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-gray-500">Assessment</div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {moduleId === "welcome"
+                      ? "Section 1 — Quiz"
+                      : "Section Quiz"}
+                  </h3>
+                  <p className="text-gray-600 text-sm mt-1">
+                    {isComplete
+                      ? "You’ve finished the lessons. Take the quiz to complete this section."
+                      : "Finish all lessons to unlock the section quiz."}
+                  </p>
+                </div>
+
+                <Link
+                  href={`/course/${moduleId}/quiz`}
+                  className={`inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold shadow-md transition-colors ${
+                    isComplete
+                      ? "bg-green-500 text-white hover:bg-green-600"
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none"
+                  }`}
+                  aria-disabled={!isComplete}
+                >
+                  {isComplete ? "Start Quiz →" : "Locked"}
+                </Link>
+              </div>
+            </section>
+          )}
+        </Shell>
+      </div>
+    </AuthGuard>
+  );
+}

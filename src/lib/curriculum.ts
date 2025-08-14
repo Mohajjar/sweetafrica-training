@@ -1,24 +1,29 @@
 // src/lib/curriculum.ts
+import type { ModuleId } from "@/lib/modules";
+import {
+  moduleTitle,
+  getTotalLessons as getTotalFromModules,
+} from "@/lib/modules";
 
-// 1) The source of truth for available modules
-export type ModuleId = "welcome" | "fundamentals";
-
-// 2) Central curriculum registry
+/**
+ * Thin wrapper so older code that imports from "curriculum"
+ * (getModuleTitle, getTotalLessons) keeps working.
+ * The truth lives in src/lib/modules.ts.
+ */
 export const curriculum: Record<
   ModuleId,
   { title: string; totalLessons: number }
 > = {
   welcome: {
-    title: "Welcome to Sweet Africa Global",
-    totalLessons: 3,
+    title: moduleTitle.welcome,
+    totalLessons: getTotalFromModules("welcome"),
   },
   fundamentals: {
-    title: "Fundamentals of Cleaning",
-    totalLessons: 2,
+    title: moduleTitle.fundamentals,
+    totalLessons: getTotalFromModules("fundamentals"),
   },
 };
 
-// 3) Helpers used across Admin/Dashboard
 export function getModuleTitle(m: ModuleId) {
   return curriculum[m].title;
 }
@@ -26,3 +31,5 @@ export function getModuleTitle(m: ModuleId) {
 export function getTotalLessons(m: ModuleId) {
   return curriculum[m].totalLessons;
 }
+
+export type { ModuleId } from "@/lib/modules";

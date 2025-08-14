@@ -10,8 +10,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { markLessonComplete } from "@/lib/progress";
 import Link from "next/link";
 import CourseTracker from "@/components/CourseTracker";
+import useAutoGate from "@/hooks/useAutoGate";
+import LessonFooter from "@/components/LessonFooter";
+import { getLessons } from "@/lib/modules";
 
 export default function WhoWeAre() {
+  useAutoGate("welcome", "who-we-are");
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (!u) return;
@@ -32,23 +36,7 @@ export default function WhoWeAre() {
                 <CourseTracker
                   moduleId="welcome"
                   currentLessonId="who-we-are"
-                  lessons={[
-                    {
-                      id: "who-we-are",
-                      title: "Who We Are",
-                      href: "/course/welcome/lesson/who-we-are",
-                    },
-                    {
-                      id: "vision-mission-values",
-                      title: "Vision, Mission & Core Values",
-                      href: "/course/welcome/lesson/vision-mission-values",
-                    },
-                    {
-                      id: "expectations-communication",
-                      title: "Expectations & Communication",
-                      href: "/course/welcome/lesson/expectations-communication",
-                    },
-                  ]}
+                  lessons={getLessons("welcome")}
                 />
               </aside>
 
@@ -111,20 +99,11 @@ export default function WhoWeAre() {
                     communication. The little details done right, every time.
                   </p>
 
-                  <div className="pt-6 mt-8 border-t border-gray-200 flex items-center justify-between">
-                    <Link
-                      href="/course/welcome"
-                      className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      ← Back to Module
-                    </Link>
-                    <Link
-                      href="/course/welcome/lesson/vision-mission-values"
-                      className="inline-flex items-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors text-white px-6 py-3 text-sm font-semibold shadow-md"
-                    >
-                      Next Lesson →
-                    </Link>
-                  </div>
+                  <LessonFooter
+                    moduleId="welcome"
+                    lessonId="who-we-are"
+                    requireAck={false}
+                  />
                 </article>
               </main>
             </div>

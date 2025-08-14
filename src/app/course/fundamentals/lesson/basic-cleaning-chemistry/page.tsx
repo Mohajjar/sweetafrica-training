@@ -1,43 +1,14 @@
 "use client";
 
-import AuthGuard from "@/components/AuthGuard";
 import Shell from "@/components/Shell";
 import CourseTracker from "@/components/CourseTracker";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { markLessonComplete } from "@/lib/progress";
-import { useRouter } from "next/navigation";
-import useLessonGate from "@/hooks/useLessonGate";
+import useAutoGate from "@/hooks/useAutoGate";
+import LessonFooter from "@/components/LessonFooter";
+import AuthGuard from "@/components/AuthGuard";
+import { getLessons } from "@/lib/modules";
 
 export default function BasicCleaningChemistry() {
-  useLessonGate({
-    moduleId: "fundamentals",
-    requireCompleted: ["defining-cleaning"],
-  });
-  const router = useRouter();
-  const [uid, setUid] = useState<string | null>(null);
-  const [ack, setAck] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
-    return () => unsub();
-  }, []);
-
-  const canFinish = ack && !!uid;
-
-  const handleFinish = async () => {
-    if (!canFinish || !uid) return;
-    setSaving(true);
-    try {
-      await markLessonComplete(uid, "fundamentals", "basic-cleaning-chemistry");
-      router.push("/course/fundamentals");
-    } finally {
-      setSaving(false);
-    }
-  };
+  useAutoGate("fundamentals", "basic-cleaning-chemistry"); // moduleId, currentLessonId
 
   return (
     <AuthGuard>
@@ -50,18 +21,7 @@ export default function BasicCleaningChemistry() {
                 <CourseTracker
                   moduleId="fundamentals"
                   currentLessonId="basic-cleaning-chemistry"
-                  lessons={[
-                    {
-                      id: "defining-cleaning",
-                      title: "Defining Cleaning",
-                      href: "/course/fundamentals/lesson/defining-cleaning",
-                    },
-                    {
-                      id: "basic-cleaning-chemistry",
-                      title: "Basic Cleaning Chemistry",
-                      href: "/course/fundamentals/lesson/basic-cleaning-chemistry",
-                    },
-                  ]}
+                  lessons={getLessons("fundamentals")}
                 />
               </aside>
 
@@ -233,40 +193,12 @@ export default function BasicCleaningChemistry() {
                     healthier environment and better results.
                   </p>
 
-                  {/* Acknowledge + actions */}
-                  <div className="pt-6 mt-8 border-t border-gray-200">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={ack}
-                        onChange={(e) => setAck(e.target.checked)}
-                        className="mt-1 h-5 w-5 rounded text-green-500 focus:ring-green-500 border-gray-300"
-                      />
-                      <span className="text-sm text-gray-700 leading-6">
-                        I’ve read and understood this lesson.
-                      </span>
-                    </label>
-
-                    <div className="mt-6 flex items-center justify-between">
-                      <Link
-                        href="/course/fundamentals/lesson/defining-cleaning"
-                        className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        ← Back
-                      </Link>
-                      <button
-                        onClick={handleFinish}
-                        disabled={!canFinish}
-                        className={`inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold shadow-md transition-colors ${
-                          canFinish
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        }`}
-                      >
-                        {saving ? "Saving…" : "Done — Return to Module →"}
-                      </button>
-                    </div>
-                  </div>
+                  <LessonFooter
+                    moduleId="fundamentals"
+                    lessonId="basic-cleaning-chemistry"
+                    requireAck={true}
+                    ackLabel="I’ve read and understood this lesson."
+                  />
                 </article>
               </main>
             </div>

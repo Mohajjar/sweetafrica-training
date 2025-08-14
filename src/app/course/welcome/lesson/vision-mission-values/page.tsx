@@ -9,8 +9,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CourseTracker from "@/components/CourseTracker";
 import useLessonGate from "@/hooks/useLessonGate";
+import useAutoGate from "@/hooks/useAutoGate";
+import LessonFooter from "@/components/LessonFooter";
+import { getLessons } from "@/lib/modules";
 
 export default function VisionMissionValues() {
+  useAutoGate("welcome", "vision-mission-values");
   useLessonGate({
     moduleId: "welcome",
     requireCompleted: ["who-we-are"],
@@ -35,23 +39,7 @@ export default function VisionMissionValues() {
                 <CourseTracker
                   moduleId="welcome"
                   currentLessonId="vision-mission-values"
-                  lessons={[
-                    {
-                      id: "who-we-are",
-                      title: "Who We Are",
-                      href: "/course/welcome/lesson/who-we-are",
-                    },
-                    {
-                      id: "vision-mission-values",
-                      title: "Vision, Mission & Core Values",
-                      href: "/course/welcome/lesson/vision-mission-values",
-                    },
-                    {
-                      id: "expectations-communication",
-                      title: "Expectations & Communication",
-                      href: "/course/welcome/lesson/expectations-communication",
-                    },
-                  ]}
+                  lessons={getLessons("welcome")}
                 />
               </aside>
 
@@ -143,21 +131,11 @@ export default function VisionMissionValues() {
                     expect you to say something. If you’re committed, we’ve got
                     your back.
                   </p>
-                  <div className="pt-6 mt-8 border-t border-gray-200 flex justify-between">
-                    <Link
-                      href="/course/welcome/lesson/who-we-are"
-                      className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      ← Back
-                    </Link>
-
-                    <Link
-                      href="/course/welcome/lesson/expectations-communication"
-                      className="inline-flex items-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors text-white px-6 py-3 text-sm font-semibold shadow-md"
-                    >
-                      Next Lesson →
-                    </Link>
-                  </div>
+                  <LessonFooter
+                    moduleId="welcome"
+                    lessonId="vision-mission-values"
+                    requireAck={false}
+                  />
                 </article>
               </main>
             </div>
