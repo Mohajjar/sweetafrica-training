@@ -6,6 +6,7 @@ import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { FaCheckCircle, FaLock } from "react-icons/fa";
+import type { ModuleId } from "@/lib/progress";
 
 type Lesson = { id: string; title: string; href: string };
 type Props = {

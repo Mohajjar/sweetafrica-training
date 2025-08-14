@@ -9,10 +9,13 @@ import {
   addDoc,
 } from "firebase/firestore";
 
+// Allowed training modules in the app
+export type ModuleId = "welcome" | "fundamentals";
+
 /** Mark a lesson as completed (idempotent via arrayUnion). */
 export async function markLessonComplete(
   uid: string,
-  moduleId: string,
+  moduleId: ModuleId,
   lessonId: string
 ) {
   const ref = doc(db, "users", uid, "progress", moduleId);
@@ -29,7 +32,7 @@ export async function markLessonComplete(
 /** Save a quiz attempt and set quizPassed=true when passed. */
 export async function saveQuizAttempt(
   uid: string,
-  moduleId: string,
+  moduleId: ModuleId,
   attempt: { percent: number; correct: number; total: number; passed: boolean }
 ) {
   // Store attempt in a subcollection

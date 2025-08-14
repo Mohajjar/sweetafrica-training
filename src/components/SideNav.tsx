@@ -6,6 +6,7 @@ import Image from "next/image";
 const items = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/course/welcome", label: "Welcome to Sweet Africa" },
+  { href: "/course/fundamentals", label: "Fundamentals of Cleaning" },
 ];
 
 export default function SideNav() {

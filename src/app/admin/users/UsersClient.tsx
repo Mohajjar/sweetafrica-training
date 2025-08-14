@@ -21,12 +21,8 @@ import {
   FaArrowLeft,
   FaDownload,
 } from "react-icons/fa";
-import {
-  curriculum,
-  getModuleTitle,
-  getTotalLessons,
-  type ModuleId,
-} from "@/lib/curriculum";
+import type { ModuleId } from "@/lib/progress";
+import { curriculum, getModuleTitle, getTotalLessons } from "@/lib/curriculum";
 
 /** -------------------------------
  *  TYPES
