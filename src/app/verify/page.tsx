@@ -1,108 +1,137 @@
-// src/app/verify/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth, db } from "@/lib/firebase";
-import {
-  onAuthStateChanged,
-  reload,
-  sendEmailVerification,
-} from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, sendEmailVerification } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function VerifyPage() {
+  const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
+  const [authed, setAuthed] = useState(false);
   const [sending, setSending] = useState(false);
-  const [checking, setChecking] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setEmail(u?.email ?? null);
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      if (!u) {
+        setAuthed(false);
+        setEmail(null);
+        return;
+      }
+      setAuthed(true);
+      setEmail(u.email ?? null);
+
+      // If already verified, go to dashboard
+      await u.reload();
+      if (u.emailVerified) {
+        router.replace("/dashboard");
+      }
     });
     return () => unsub();
-  }, []);
+  }, [router]);
 
   const resend = async () => {
-    if (!auth.currentUser) return;
+    setErr(null);
     setMsg(null);
+
+    // ⛔ require login to send
+    if (!auth.currentUser) {
+      setErr("You must be signed in to resend the verification email.");
+      return;
+    }
+
     setSending(true);
     try {
       const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-      await sendEmailVerification(auth.currentUser, { url: `${site}/verify` });
-      setMsg("Verification email sent. Please check your inbox.");
+
+      try {
+        await sendEmailVerification(auth.currentUser, {
+          url: `${site}/verify`,
+        });
+      } catch (e: any) {
+        console.error("sendEmailVerification failed:", e?.code, e?.message);
+        // Fallback if domain isn’t authorized yet
+        if (
+          e?.code === "auth/invalid-continue-uri" ||
+          e?.code === "auth/unauthorized-continue-uri"
+        ) {
+          await sendEmailVerification(auth.currentUser);
+        } else {
+          throw e;
+        }
+      }
+
+      setMsg("Verification email sent. Please check your inbox (and spam).");
     } catch (e: any) {
-      setMsg(e?.message ?? "Failed to send verification email.");
+      setErr(e?.message ?? "Failed to send verification email.");
     } finally {
       setSending(false);
     }
   };
 
-  const iveVerified = async () => {
-    if (!auth.currentUser) return;
+  const refresh = async () => {
+    setErr(null);
     setMsg(null);
-    setChecking(true);
-    try {
-      await reload(auth.currentUser);
-      if (auth.currentUser.emailVerified) {
-        // Reflect in Firestore (optional but useful for admin)
-        await setDoc(
-          doc(db, "users", auth.currentUser.uid),
-          { emailVerified: true, updatedAt: serverTimestamp() },
-          { merge: true }
-        );
-        window.location.href = "/dashboard";
-      } else {
-        setMsg(
-          "Still not verified. Please click the link in your email, then try again."
-        );
-      }
-    } catch (e: any) {
-      setMsg(e?.message ?? "Could not check verification status.");
-    } finally {
-      setChecking(false);
+    await auth.currentUser?.reload();
+    if (auth.currentUser?.emailVerified) {
+      router.replace("/dashboard");
+    } else {
+      setMsg(
+        "Still not verified. Click the link in your email, then try again."
+      );
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-lg bg-white border rounded-2xl shadow p-8">
+      <div className="max-w-md w-full bg-white border rounded-2xl p-8 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-900">Verify your email</h1>
         <p className="mt-2 text-gray-600">
-          We sent a verification link to{" "}
-          <span className="font-medium text-gray-900">
-            {email ?? "your email"}
-          </span>
-          . Please click the link, then return here.
+          {authed ? (
+            <>
+              We sent a verification link to{" "}
+              <span className="font-medium text-gray-900">
+                {email ?? "your email"}
+              </span>
+              . Click the link, then return here.
+            </>
+          ) : (
+            <>
+              You must be signed in to resend the verification email.{" "}
+              <Link href="/login" className="text-green-600 underline">
+                Sign in
+              </Link>
+              .
+            </>
+          )}
         </p>
 
-        {msg && <div className="mt-4 text-sm text-gray-700">{msg}</div>}
-
-        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <button
             onClick={resend}
-            disabled={sending}
-            className="inline-flex justify-center rounded-lg bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 text-sm font-semibold disabled:opacity-60"
+            disabled={!authed || sending}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold ${
+              authed
+                ? "bg-green-600 hover:bg-green-700 text-white"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+            }`}
           >
-            {sending ? "Sending…" : "Resend verification email"}
+            {sending ? "Sending…" : "Resend email"}
           </button>
+
           <button
-            onClick={iveVerified}
-            disabled={checking}
-            className="inline-flex justify-center rounded-lg border px-5 py-2.5 text-sm font-semibold hover:bg-gray-50 disabled:opacity-60"
+            onClick={refresh}
+            className="rounded-lg border px-4 py-2 text-sm font-semibold hover:bg-gray-50"
           >
-            {checking ? "Checking…" : "I’ve verified — continue"}
+            I verified, refresh
           </button>
         </div>
 
-        <div className="mt-6 text-sm text-gray-600">
-          Wrong address?{" "}
-          <Link href="/login" className="text-green-600 underline">
-            Sign out and try again
-          </Link>
-          .
-        </div>
+        {msg && <div className="mt-4 text-sm text-green-700">{msg}</div>}
+        {err && <div className="mt-4 text-sm text-red-600">{err}</div>}
       </div>
     </div>
   );
