@@ -14,7 +14,7 @@ export default function FundamentalsModule() {
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
 
   // This module currently has 1 lesson
-  const TOTAL_LESSONS = 1;
+  const TOTAL_LESSONS = 2;
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (u) => {
@@ -43,6 +43,14 @@ export default function FundamentalsModule() {
       description:
         "Understand the core purpose of cleaning and how it differs from sanitizing and disinfecting.",
       link: "/course/fundamentals/lesson/defining-cleaning",
+    },
+    {
+      id: "basic-cleaning-chemistry",
+      module: "Lesson 2",
+      title: "Basic Cleaning Chemistry",
+      description:
+        "Understand pH, match cleaners to soils and surfaces, and follow safe handling practices.",
+      link: "/course/fundamentals/lesson/basic-cleaning-chemistry",
     },
   ];
 

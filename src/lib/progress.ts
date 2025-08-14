@@ -1,4 +1,5 @@
 // src/lib/progress.ts
+import type { ModuleId } from "@/lib/curriculum";
 import { db } from "@/lib/firebase";
 import {
   doc,
@@ -8,9 +9,6 @@ import {
   collection,
   addDoc,
 } from "firebase/firestore";
-
-// Allowed training modules in the app
-export type ModuleId = "welcome" | "fundamentals";
 
 /** Mark a lesson as completed (idempotent via arrayUnion). */
 export async function markLessonComplete(

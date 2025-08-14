@@ -1,30 +1,22 @@
+// src/hooks/useLessonGate.ts
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import type { ModuleId } from "@/lib/curriculum"; // ✅ make sure we use the union type
 
-type Opts = {
-  moduleId: "welcome";
-  /** lessons that must be completed to view this page */
-  requireCompleted: string[];
-  /** where to send the user if locked */
-  redirectTo?: string;
+type LessonGateOpts = {
+  moduleId: ModuleId; // ✅ allow "welcome" | "fundamentals"
+  requireCompleted?: string[]; // lesson ids that must be completed
+  redirectTo?: string; // optional custom redirect
 };
 
-/**
- * Redirects the user away if they haven't completed required lessons.
- * Use inside client components (lessons).
- */
-export default function useLessonGate({
-  moduleId,
-  requireCompleted,
-  redirectTo = "/course/welcome",
-}: Opts) {
+export default function useLessonGate(opts: LessonGateOpts) {
+  const { moduleId, requireCompleted = [], redirectTo } = opts;
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -32,16 +24,19 @@ export default function useLessonGate({
         router.replace("/login");
         return;
       }
+
+      // Check the user's progress doc for this module
       const ref = doc(db, "users", u.uid, "progress", moduleId);
       const snap = await getDoc(ref);
-      const completed: string[] = (snap.data()?.completedLessonIds ??
-        []) as string[];
-      const ok = requireCompleted.every((id) => completed.includes(id));
-      if (!ok) router.replace(redirectTo);
-      setChecked(true);
+      const completed: string[] = snap.data()?.completedLessonIds ?? [];
+
+      const allMet = requireCompleted.every((id) => completed.includes(id));
+      if (!allMet) {
+        // by default, bounce them back to the module page
+        router.replace(redirectTo ?? `/course/${moduleId}`);
+      }
     });
+
     return () => unsub();
   }, [moduleId, requireCompleted, redirectTo, router]);
-
-  return checked; // optional “ready” flag if you want to delay rendering
 }

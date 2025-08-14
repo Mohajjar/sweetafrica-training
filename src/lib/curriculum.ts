@@ -1,22 +1,24 @@
 // src/lib/curriculum.ts
-import type { ModuleId } from "@/lib/progress";
 
-// Central curriculum registry: title + lesson counts per module
+// 1) The source of truth for available modules
+export type ModuleId = "welcome" | "fundamentals";
+
+// 2) Central curriculum registry
 export const curriculum: Record<
   ModuleId,
   { title: string; totalLessons: number }
 > = {
   welcome: {
     title: "Welcome to Sweet Africa Global",
-    totalLessons: 3, // keep in sync with your Welcome module
+    totalLessons: 3,
   },
   fundamentals: {
     title: "Fundamentals of Cleaning",
-    totalLessons: 1, // bump as you add more lessons in this module
+    totalLessons: 2,
   },
 };
 
-// Helpers used across Admin/Dashboard
+// 3) Helpers used across Admin/Dashboard
 export function getModuleTitle(m: ModuleId) {
   return curriculum[m].title;
 }

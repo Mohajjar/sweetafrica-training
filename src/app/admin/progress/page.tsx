@@ -5,7 +5,7 @@ import Shell from "@/components/Shell";
 import useIsAdmin from "@/hooks/useIsAdmin";
 import { useState } from "react";
 import { curriculum, getModuleTitle } from "@/lib/curriculum";
-import type { ModuleId } from "@/lib/progress";
+import type { ModuleId } from "@/lib/curriculum";
 
 const ALL_MODULE_IDS = Object.keys(curriculum) as ModuleId[];
 

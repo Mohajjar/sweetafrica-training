@@ -26,7 +26,7 @@ const LESSON_LABEL_WELCOME: Record<string, string> = {
 
 const LESSON_LABEL_FUNDAMENTALS: Record<string, string> = {
   "defining-cleaning": "Defining Cleaning",
-  // add more when you add lessons
+  "basic-cleaning-chemistry": "Basic Cleaning Chemistry",
 };
 
 export default function Dashboard() {
