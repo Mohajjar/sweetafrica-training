@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import SideNav from "./SideNav";
 import TopBar from "./TopBar";
+import EnsureUserDoc from "@/components/EnsureUserDoc";
 
 export default function Shell({ children }: { children: ReactNode }) {
   return (

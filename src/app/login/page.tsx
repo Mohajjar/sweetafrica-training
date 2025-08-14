@@ -1,17 +1,59 @@
 "use client";
+
 import { FormEvent, useState } from "react";
-import { auth } from "@/lib/firebase";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { auth, db } from "@/lib/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+
+// Upsert the user doc and include extra profile fields
+async function upsertUserDoc(
+  u: {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    emailVerified?: boolean;
+  },
+  extra?: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    displayName?: string;
+  }
+) {
+  await setDoc(
+    doc(db, "users", u.uid),
+    {
+      email: u.email ?? null,
+      displayName: u.displayName ?? null,
+      emailVerified: u.emailVerified ?? false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      ...(extra || {}),
+    },
+    { merge: true }
+  );
+}
 
 export default function LoginPage() {
+  const [mode, setMode] = useState<"login" | "signup">("login");
+
+  // Shared
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-  const [mode, setMode] = useState<"login" | "signup">("login");
+
+  // Sign-up extra fields
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
+  const [phone, setPhone] = useState("");
+  const [confirm, setConfirm] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -20,14 +62,56 @@ export default function LoginPage() {
     setErr(null);
     setLoading(true);
     try {
-      if (mode === "login") {
-        await signInWithEmailAndPassword(auth, email, pass);
+      if (mode === "signup") {
+        if (pass !== confirm) throw new Error("Passwords do not match.");
+        if (!first.trim() || !last.trim())
+          throw new Error("Please enter your first and last name.");
+
+        // Create account
+        const cred = await createUserWithEmailAndPassword(
+          auth,
+          email.trim(),
+          pass
+        );
+
+        const displayName = `${first.trim()} ${last.trim()}`.trim();
+
+        // Set the Firebase Auth displayName (non-blocking)
+        try {
+          await updateProfile(cred.user, { displayName });
+        } catch {
+          /* ignore */
+        }
+
+        // Write user document with extra fields
+        await upsertUserDoc(
+          {
+            uid: cred.user.uid,
+            email: cred.user.email,
+            displayName,
+            emailVerified: cred.user.emailVerified,
+          },
+          {
+            firstName: first.trim(),
+            lastName: last.trim(),
+            phone: phone.trim(),
+            displayName,
+          }
+        );
+
+        // Send email verification and redirect to /verify
+        const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+        await sendEmailVerification(cred.user, { url: `${site}/verify` });
+        window.location.href = "/verify";
+        return;
       } else {
-        await createUserWithEmailAndPassword(auth, email, pass);
+        // Login
+        await signInWithEmailAndPassword(auth, email.trim(), pass);
+        window.location.href = "/dashboard";
+        return;
       }
-      window.location.href = "/dashboard";
     } catch (e: any) {
-      setErr(e.message ?? "Failed");
+      setErr(e?.message ?? "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -55,6 +139,35 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
+          {mode === "signup" && (
+            <>
+              <input
+                type="text"
+                placeholder="First name"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors placeholder-gray-500 text-gray-900"
+                value={first}
+                onChange={(e) => setFirst(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Last name"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors placeholder-gray-500 text-gray-900"
+                value={last}
+                onChange={(e) => setLast(e.target.value)}
+                required
+              />
+              <input
+                type="tel"
+                placeholder="Phone number"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors placeholder-gray-500 text-gray-900"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                // Keep optional or add pattern if you want strict validation
+              />
+            </>
+          )}
+
           <input
             type="email"
             placeholder="Email"
@@ -63,6 +176,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+
           <input
             type="password"
             placeholder="Password"
@@ -71,6 +185,18 @@ export default function LoginPage() {
             onChange={(e) => setPass(e.target.value)}
             required
           />
+
+          {mode === "signup" && (
+            <input
+              type="password"
+              placeholder="Confirm password"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors placeholder-gray-500 text-gray-900"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+            />
+          )}
+
           {err && <div className="text-red-600 text-sm">{err}</div>}
 
           <button
@@ -89,7 +215,7 @@ export default function LoginPage() {
         <div className="mt-4 text-sm text-center text-gray-600">
           {mode === "login" ? (
             <span>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <button
                 onClick={() => setMode("signup")}
                 className="text-green-600 hover:underline font-medium"

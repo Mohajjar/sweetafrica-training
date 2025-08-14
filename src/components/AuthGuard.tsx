@@ -1,25 +1,32 @@
+// src/components/AuthGuard.tsx (snippet)
 "use client";
+
 import { ReactNode, useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function AuthGuard({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) window.location.href = "/login";
-      else setReady(true);
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (!u) {
+        router.replace("/login");
+        return;
+      }
+      // Allow /verify itself, otherwise require verified
+      if (!u.emailVerified && pathname !== "/verify") {
+        router.replace("/verify");
+        return;
+      }
+      setReady(true);
     });
     return () => unsub();
-  }, []);
+  }, [router, pathname]);
 
-  if (!ready) {
-    return (
-      <div className="min-h-screen grid place-items-center bg-gray-50 text-gray-500 font-medium text-lg">
-        Checking access…
-      </div>
-    );
-  }
+  if (!ready) return null;
   return <>{children}</>;
 }
