@@ -64,3 +64,64 @@ export const welcomeQuiz: QuizQuestion[] = [
     answerIndex: 2,
   },
 ];
+
+/** Final quiz for the "fundamentals" module */
+export const fundamentalsQuiz: QuizQuestion[] = [
+  {
+    id: "f1",
+    prompt: "What is the primary purpose of 'sanitizing' a surface?",
+    options: [
+      "To remove visible dirt and debris",
+      "To reduce the number of germs to a safe level",
+      "To kill all pathogens, including viruses",
+      "To add a protective coating to the surface",
+    ],
+    answerIndex: 1,
+  },
+  {
+    id: "f2",
+    prompt:
+      "Which type of cleaning product is best for cutting grease and food residues?",
+    options: [
+      "Acidic cleaners",
+      "Neutral cleaners",
+      "Alkaline cleaners",
+      "Abrasive cleaners",
+    ],
+    answerIndex: 2,
+  },
+  {
+    id: "f3",
+    prompt: "What is the core principle of a systematic cleaning flow?",
+    options: [
+      "Bottom to top, right to left",
+      "Wet before dry",
+      "Top to bottom, left to right",
+      "In any order that feels efficient",
+    ],
+    answerIndex: 2,
+  },
+  {
+    id: "f4",
+    prompt: "What is 'dwell time' in the context of cleaning?",
+    options: [
+      "The time it takes to complete a room",
+      "The time a cleaning product must sit on a surface to be effective",
+      "The time it takes for a surface to dry",
+      "The time spent inspecting a room after cleaning",
+    ],
+    answerIndex: 1,
+  },
+  {
+    id: "f5",
+    prompt:
+      "What is the first step you should take when cleaning upholstered furniture?",
+    options: [
+      "Spot clean any stains",
+      "Apply a fabric protector",
+      "Shampoo the entire piece",
+      "Vacuum the surface to remove loose dirt and debris",
+    ],
+    answerIndex: 3,
+  },
+];

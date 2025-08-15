@@ -31,12 +31,27 @@ export default function LessonFooter({
 
   const prevId = getPrevLessonId(moduleId, lessonId);
   const nextId = getNextLessonId(moduleId, lessonId);
+
   const prevHref = prevId
     ? getLessonHref(moduleId, prevId)
     : `/course/${moduleId}`;
-  const nextHref = nextId
-    ? getLessonHref(moduleId, nextId)
-    : `/course/${moduleId}`;
+
+  // ** FIX STARTS HERE **
+  // If it's the last lesson, determine if there is a recap page.
+  let nextHref: string | null;
+  if (nextId) {
+    nextHref = getLessonHref(moduleId, nextId);
+  } else {
+    // This is the last lesson. Go to recap if the module has a quiz.
+    const modulesWithQuizzes: ModuleId[] = ["welcome", "fundamentals"];
+    if (modulesWithQuizzes.includes(moduleId)) {
+      nextHref = `/course/${moduleId}/recap`;
+    } else {
+      nextHref = `/course/${moduleId}`; // Default fallback to module index
+    }
+  }
+  // ** FIX ENDS HERE **
+
   const canFinish = !!uid && ack;
 
   const finish = async () => {
@@ -74,14 +89,14 @@ export default function LessonFooter({
 
         <button
           onClick={finish}
-          disabled={!canFinish}
+          disabled={!canFinish || saving}
           className={`inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold shadow-md transition-colors ${
             canFinish
               ? "bg-green-500 text-white hover:bg-green-600"
               : "bg-gray-200 text-gray-500 cursor-not-allowed"
           }`}
         >
-          {saving ? "Saving…" : nextId ? "Next Lesson →" : "Finish & Return →"}
+          {saving ? "Saving…" : nextId ? "Next Lesson →" : "Finish & Review →"}
         </button>
       </div>
     </div>
