@@ -7,6 +7,7 @@ const items = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/course/welcome", label: "Welcome to Sweet Africa" },
   { href: "/course/fundamentals", label: "Fundamentals of Cleaning" },
+  { href: "/course/professionalism", label: "Professional Cleaning" },
 ];
 
 export default function SideNav() {

@@ -5,11 +5,6 @@ import {
   getTotalLessons as getTotalFromModules,
 } from "@/lib/modules";
 
-/**
- * Thin wrapper so older code that imports from "curriculum"
- * (getModuleTitle, getTotalLessons) keeps working.
- * The truth lives in src/lib/modules.ts.
- */
 export const curriculum: Record<
   ModuleId,
   { title: string; totalLessons: number }
@@ -21,6 +16,10 @@ export const curriculum: Record<
   fundamentals: {
     title: moduleTitle.fundamentals,
     totalLessons: getTotalFromModules("fundamentals"),
+  },
+  professionalism: {
+    title: moduleTitle.professionalism,
+    totalLessons: getTotalFromModules("professionalism"),
   },
 };
 

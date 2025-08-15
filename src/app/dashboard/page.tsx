@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { getModuleTitle, getTotalLessons } from "@/lib/curriculum";
+import { getModuleTitle, getTotalLessons, ModuleId } from "@/lib/curriculum";
 
 type CourseStatus = {
   title: string;
@@ -18,101 +18,95 @@ type CourseStatus = {
   link: string;
 };
 
-const LESSON_LABEL_WELCOME: Record<string, string> = {
-  "who-we-are": "Who We Are",
-  "vision-mission-values": "Vision, Mission & Core Values",
-  "expectations-communication": "Expectations & Communication",
-};
-
-const LESSON_LABEL_FUNDAMENTALS: Record<string, string> = {
-  "defining-cleaning": "Defining Cleaning",
-  "basic-cleaning-chemistry": "Basic Cleaning Chemistry",
-  "tools-and-supplies": "Tools & Supplies",
-  "safety-and-self-protection": "Safety and Self-Protection",
-  "cleaning-systems-and-flow": "Cleaning Systems and Flow",
-  "understanding-dirt-and-debris": "Understanding Dirt & Debris",
-  "handling-different-rooms": "Handling Different Rooms",
-  "common-furniture-and-fixtures": "Common Furniture & Fixtures",
-  "final-inspection-habits": "Final Inspection Habits",
+const LESSON_LABELS: Record<ModuleId, Record<string, string>> = {
+  welcome: {
+    "who-we-are": "Who We Are",
+    "vision-mission-values": "Vision, Mission & Core Values",
+    "expectations-communication": "Expectations & Communication",
+  },
+  fundamentals: {
+    "defining-cleaning": "Defining Cleaning",
+    "basic-cleaning-chemistry": "Basic Cleaning Chemistry",
+    "tools-and-supplies": "Tools & Supplies",
+    "safety-and-self-protection": "Safety and Self-Protection",
+    "cleaning-systems-and-flow": "Cleaning Systems and Flow",
+    "understanding-dirt-and-debris": "Understanding Dirt & Debris",
+    "handling-different-rooms": "Handling Different Rooms",
+    "common-furniture-and-fixtures": "Common Furniture & Fixtures",
+    "final-inspection-habits": "Final Inspection Habits",
+  },
+  professionalism: {
+    "you-are-the-service": "You are the Service",
+  },
 };
 
 export default function Dashboard() {
-  const [welcomeStatus, setWelcomeStatus] = useState<CourseStatus>({
-    title: getModuleTitle("welcome"),
-    lastLesson: "Not started",
-    progress: 0,
-    isCompleted: false,
-    link: "/course/welcome",
-  });
-
-  const [fundamentalsStatus, setFundamentalsStatus] = useState<CourseStatus>({
-    title: getModuleTitle("fundamentals"),
-    lastLesson: "Not started",
-    progress: 0,
-    isCompleted: false,
-    link: "/course/fundamentals",
+  const [statuses, setStatuses] = useState<Record<ModuleId, CourseStatus>>({
+    welcome: {
+      title: getModuleTitle("welcome"),
+      lastLesson: "Not started",
+      progress: 0,
+      isCompleted: false,
+      link: "/course/welcome",
+    },
+    fundamentals: {
+      title: getModuleTitle("fundamentals"),
+      lastLesson: "Not started",
+      progress: 0,
+      isCompleted: false,
+      link: "/course/fundamentals",
+    },
+    professionalism: {
+      title: getModuleTitle("professionalism"),
+      lastLesson: "Not started",
+      progress: 0,
+      isCompleted: false,
+      link: "/course/professionalism",
+    },
   });
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (u) => {
       if (!u) return;
 
-      // Welcome progress
-      const totalWelcome = getTotalLessons("welcome");
-      const welcomeRef = doc(db, "users", u.uid, "progress", "welcome");
-      const unsubWelcome = onSnapshot(welcomeRef, (snap) => {
-        const done = (snap.data()?.completedLessonIds ?? []) as string[];
-        const progress = Math.min(
-          100,
-          Math.round((done.length / totalWelcome) * 100)
-        );
-        const last = done.length ? done[done.length - 1] : null;
+      const moduleIds: ModuleId[] = [
+        "welcome",
+        "fundamentals",
+        "professionalism",
+      ];
+      const unsubscribers = moduleIds.map((moduleId) => {
+        const totalLessons = getTotalLessons(moduleId);
+        const ref = doc(db, "users", u.uid, "progress", moduleId);
+        return onSnapshot(ref, (snap) => {
+          const done = (snap.data()?.completedLessonIds ?? []) as string[];
+          const progress =
+            totalLessons > 0
+              ? Math.min(100, Math.round((done.length / totalLessons) * 100))
+              : 0;
+          const last = done.length ? done[done.length - 1] : null;
 
-        setWelcomeStatus((prev) => ({
-          ...prev,
-          lastLesson: last ? LESSON_LABEL_WELCOME[last] ?? last : "Not started",
-          progress,
-          isCompleted: progress === 100,
-        }));
+          setStatuses((prev) => ({
+            ...prev,
+            [moduleId]: {
+              ...prev[moduleId],
+              lastLesson: last
+                ? LESSON_LABELS[moduleId][last] ?? last
+                : "Not started",
+              progress,
+              isCompleted: progress === 100,
+            },
+          }));
+        });
       });
 
-      // Fundamentals progress
-      const totalFundamentals = getTotalLessons("fundamentals");
-      const fundamentalsRef = doc(
-        db,
-        "users",
-        u.uid,
-        "progress",
-        "fundamentals"
-      );
-      const unsubFundamentals = onSnapshot(fundamentalsRef, (snap) => {
-        const done = (snap.data()?.completedLessonIds ?? []) as string[];
-        const progress = Math.min(
-          100,
-          Math.round((done.length / totalFundamentals) * 100)
-        );
-        const last = done.length ? done[done.length - 1] : null;
-
-        setFundamentalsStatus((prev) => ({
-          ...prev,
-          lastLesson: last
-            ? LESSON_LABEL_FUNDAMENTALS[last] ?? last
-            : "Not started",
-          progress,
-          isCompleted: progress === 100,
-        }));
-      });
-
-      return () => {
-        unsubWelcome();
-        unsubFundamentals();
-      };
+      return () => unsubscribers.forEach((unsub) => unsub());
     });
 
     return () => unsubAuth();
   }, []);
 
-  const canStartFundamentals = welcomeStatus.isCompleted;
+  const canStartFundamentals = statuses.welcome.isCompleted;
+  const canStartProfessionalism = statuses.fundamentals.isCompleted;
 
   return (
     <AuthGuard>
@@ -128,15 +122,17 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ModuleCard status={welcomeStatus} />
+            <ModuleCard status={statuses.welcome} />
             <ModuleCard
-              status={fundamentalsStatus}
+              status={statuses.fundamentals}
               isLocked={!canStartFundamentals}
+              lockedReason="Complete 'Welcome' module first."
             />
-
-            <div className="bg-white rounded-xl shadow-md border p-6 md:p-8 flex flex-col items-center justify-center text-center text-gray-500 lg:col-span-2">
-              <p className="text-lg">More features and courses coming soon!</p>
-            </div>
+            <ModuleCard
+              status={statuses.professionalism}
+              isLocked={!canStartProfessionalism}
+              lockedReason="Complete 'Fundamentals' module first."
+            />
           </div>
         </section>
       </Shell>
@@ -147,9 +143,11 @@ export default function Dashboard() {
 function ModuleCard({
   status,
   isLocked = false,
+  lockedReason = "Complete previous module.",
 }: {
   status: CourseStatus;
   isLocked?: boolean;
+  lockedReason?: string;
 }) {
   const linkContent = (
     <div
@@ -160,7 +158,7 @@ function ModuleCard({
       }`}
     >
       {isLocked
-        ? "Complete Previous Module"
+        ? "Locked"
         : status.progress > 0
         ? "Continue Training"
         : "Start Training"}{" "}
@@ -190,7 +188,7 @@ function ModuleCard({
 
       <p className="mt-4 text-gray-600">
         {isLocked ? (
-          "You must complete the 'Welcome' module first."
+          lockedReason
         ) : status.progress > 0 ? (
           <>
             You last worked on:{" "}

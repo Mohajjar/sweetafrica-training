@@ -1,9 +1,10 @@
 // src/lib/modules.ts
-export type ModuleId = "welcome" | "fundamentals";
+export type ModuleId = "welcome" | "fundamentals" | "professionalism";
 
 export const moduleTitle = {
   welcome: "Welcome to Sweet Africa Global",
   fundamentals: "Fundamentals of Cleaning",
+  professionalism: "Professional Cleaning Service",
 } as const;
 
 export type LessonInfo = { id: string; title: string; href: string };
@@ -73,9 +74,27 @@ const moduleLessons: Record<ModuleId, LessonInfo[]> = {
       href: "/course/fundamentals/lesson/final-inspection-habits",
     },
   ],
+  professionalism: [
+    {
+      id: "you-are-the-service",
+      title: "You are the Service",
+      href: "/course/professionalism/lesson/you-are-the-service",
+    },
+    {
+      id: "uniform-gear-and-hygiene-standards",
+      title: "Uniform, Gear & Hygiene Standards",
+      href: "/course/professionalism/lesson/uniform-gear-and-hygiene-standards",
+    },
+    {
+      id: "communication-on-the-job",
+      title: "Communication On the Job",
+      href: "/course/professionalism/lesson/communication-on-the-job",
+    },
+    // Add more Professionalism lessons here
+  ],
 };
 
-// ----- NEW: helpers -----
+// ----- helpers -----
 export function getLessons(moduleId: ModuleId): LessonInfo[] {
   return moduleLessons[moduleId];
 }
@@ -84,13 +103,11 @@ export function getTotalLessons(moduleId: ModuleId): number {
   return moduleLessons[moduleId].length;
 }
 
-// Find the index of a lesson within a module
 export function getLessonIndex(moduleId: ModuleId, lessonId: string): number {
   const list = moduleLessons[moduleId];
   return list.findIndex((l) => l.id === lessonId);
 }
 
-// Get the *next* lesson id or null if on last lesson
 export function getNextLessonId(
   moduleId: ModuleId,
   currentLessonId: string
@@ -101,7 +118,6 @@ export function getNextLessonId(
   return null;
 }
 
-// Get the *previous* lesson id or null if on first lesson
 export function getPrevLessonId(
   moduleId: ModuleId,
   currentLessonId: string
@@ -112,7 +128,6 @@ export function getPrevLessonId(
   return null;
 }
 
-// Return the href for a given lesson id (or null if not found)
 export function getLessonHref(
   moduleId: ModuleId,
   lessonId: string
