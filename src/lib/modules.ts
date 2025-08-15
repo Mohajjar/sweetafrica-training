@@ -52,7 +52,26 @@ const moduleLessons: Record<ModuleId, LessonInfo[]> = {
       title: "Cleaning Systems and Flow",
       href: "/course/fundamentals/lesson/cleaning-systems-and-flow",
     },
-    // Add more Fundamentals lessons here in order as you create them
+    {
+      id: "understanding-dirt-and-debris",
+      title: "Understanding Dirt & Debris",
+      href: "/course/fundamentals/lesson/understanding-dirt-and-debris",
+    },
+    {
+      id: "handling-different-rooms",
+      title: "Handling Different Rooms",
+      href: "/course/fundamentals/lesson/handling-different-rooms",
+    },
+    {
+      id: "common-furniture-and-fixtures",
+      title: "Common Furniture & Fixtures",
+      href: "/course/fundamentals/lesson/common-furniture-and-fixtures",
+    },
+    {
+      id: "final-inspection-habits",
+      title: "Final Inspection Habits",
+      href: "/course/fundamentals/lesson/final-inspection-habits",
+    },
   ],
 };
 

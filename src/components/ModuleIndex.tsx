@@ -35,10 +35,9 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
 
   const lessons = getLessons(moduleId);
 
-  // ✅ Quiz availability + completion check
   const hasQuiz: Record<ModuleId, boolean> = {
     welcome: true,
-    fundamentals: true, // set to false for modules without a quiz yet
+    fundamentals: true,
   };
   const total = getTotalLessons(moduleId);
   const isComplete = total ? completed.length >= total : false;
@@ -90,26 +89,23 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
             ))}
           </section>
 
-          {/* ✅ Section Quiz CTA (locked until all lessons complete) */}
           {hasQuiz[moduleId] && (
             <section className="mt-8">
               <div className="rounded-2xl border bg-white p-6 md:p-8 shadow-sm flex items-center justify-between">
                 <div>
                   <div className="text-sm text-gray-500">Assessment</div>
                   <h3 className="text-xl font-semibold text-gray-900">
-                    {moduleId === "welcome"
-                      ? "Section 1 — Quiz"
-                      : "Section Quiz"}
+                    {moduleTitle[moduleId]} — Quiz
                   </h3>
                   <p className="text-gray-600 text-sm mt-1">
                     {isComplete
-                      ? "You’ve finished the lessons. Take the quiz to complete this section."
+                      ? "You’ve finished the lessons. Review the key concepts and then start the quiz."
                       : "Finish all lessons to unlock the section quiz."}
                   </p>
                 </div>
 
                 <Link
-                  href={`/course/${moduleId}/quiz`}
+                  href={`/course/${moduleId}/recap`}
                   className={`inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold shadow-md transition-colors ${
                     isComplete
                       ? "bg-green-500 text-white hover:bg-green-600"
@@ -117,7 +113,7 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
                   }`}
                   aria-disabled={!isComplete}
                 >
-                  {isComplete ? "Start Quiz →" : "Locked"}
+                  {isComplete ? "Review & Start Quiz →" : "Locked"}
                 </Link>
               </div>
             </section>
