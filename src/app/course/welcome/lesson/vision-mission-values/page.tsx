@@ -1,33 +1,18 @@
 "use client";
 import AuthGuard from "@/components/AuthGuard";
 import Shell from "@/components/Shell";
-import { useEffect } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { markLessonComplete } from "@/lib/progress";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import CourseTracker from "@/components/CourseTracker";
 import useLessonGate from "@/hooks/useLessonGate";
-import useAutoGate from "@/hooks/useAutoGate";
 import LessonFooter from "@/components/LessonFooter";
 import { getLessons } from "@/lib/modules";
 
 export default function VisionMissionValues() {
-  useAutoGate("welcome", "vision-mission-values");
   useLessonGate({
     moduleId: "welcome",
     requireCompleted: ["who-we-are"],
   });
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      if (!u) return;
-      await markLessonComplete(u.uid, "welcome", "vision-mission-values");
-    });
-    return () => unsub();
-  }, []);
-
+  // The automatic completion logic has been removed from here.
   return (
     <AuthGuard>
       <div className="bg-gray-50 min-h-screen">

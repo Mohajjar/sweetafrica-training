@@ -15,25 +15,33 @@ import { getTotalLessons } from "@/lib/curriculum";
 export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
   const [percent, setPercent] = useState(0);
   const [completed, setCompleted] = useState<string[]>([]);
+  const [firstUncompletedIndex, setFirstUncompletedIndex] = useState(0);
+
+  const lessons = getLessons(moduleId);
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (u) => {
       if (!u) return;
       const ref = doc(db, "users", u.uid, "progress", moduleId);
       const unsubSnap = onSnapshot(ref, (snap) => {
-        const done = snap.data()?.completedLessonIds ?? [];
+        const done = (snap.data()?.completedLessonIds ?? []) as string[];
         setCompleted(done);
+
         const total = getTotalLessons(moduleId);
         setPercent(
           total ? Math.min(100, Math.round((done.length / total) * 100)) : 0
+        );
+
+        // Find the first lesson that is NOT completed
+        const firstUncompleted = lessons.findIndex((l) => !done.includes(l.id));
+        setFirstUncompletedIndex(
+          firstUncompleted === -1 ? lessons.length : firstUncompleted
         );
       });
       return () => unsubSnap();
     });
     return () => unsubAuth();
-  }, [moduleId]);
-
-  const lessons = getLessons(moduleId);
+  }, [moduleId, lessons]);
 
   const hasQuiz: Record<ModuleId, boolean> = {
     welcome: true,
@@ -59,34 +67,48 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
           </section>
 
           <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {lessons.map((l) => (
-              <article
-                key={l.id}
-                className={`relative rounded-2xl border bg-white p-6 shadow-sm transition-all ${
-                  l.href ? "hover:shadow-lg" : ""
-                }`}
-              >
-                <div className="text-xs font-semibold text-gray-500 mb-1">
-                  Lesson {lessons.findIndex((x) => x.id === l.id) + 1}
+            {lessons.map((l, index) => {
+              const isLessonLocked = index > firstUncompletedIndex;
+              const linkContent = (
+                <div
+                  className={`inline-block rounded-full px-5 py-2 text-sm font-semibold shadow-md transition-colors ${
+                    isLessonLocked
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-green-500 text-white hover:bg-green-600"
+                  }`}
+                >
+                  {completed.includes(l.id)
+                    ? "View Lesson"
+                    : isLessonLocked
+                    ? "Locked"
+                    : "Start Lesson"}{" "}
+                  →
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900">
-                  {l.title}
-                </h3>
-                {l.href ? (
-                  <Link
-                    href={l.href}
-                    className="inline-block rounded-full bg-green-500 hover:bg-green-600 transition-colors text-white px-5 py-2 text-sm font-semibold shadow-md"
-                  >
-                    {completed.includes(l.id) ? "View Lesson" : "Start Lesson"}{" "}
-                    →
-                  </Link>
-                ) : (
-                  <span className="inline-block text-sm text-gray-500 font-medium bg-gray-100 rounded-full px-4 py-2">
-                    Coming Soon
-                  </span>
-                )}
-              </article>
-            ))}
+              );
+
+              return (
+                <article
+                  key={l.id}
+                  className={`relative rounded-2xl border bg-white p-6 shadow-sm transition-all ${
+                    isLessonLocked ? "opacity-60" : "hover:shadow-lg"
+                  }`}
+                >
+                  <div className="text-xs font-semibold text-gray-500 mb-1">
+                    Lesson {index + 1}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900">
+                    {l.title}
+                  </h3>
+                  {isLessonLocked ? (
+                    linkContent
+                  ) : (
+                    <Link href={l.href} legacyBehavior>
+                      {linkContent}
+                    </Link>
+                  )}
+                </article>
+              );
+            })}
           </section>
 
           {hasQuiz[moduleId] && (

@@ -9,8 +9,6 @@ import useLessonGate from "@/hooks/useLessonGate";
 import { getLessons } from "@/lib/modules";
 
 export default function SafetyAndSelfProtection() {
-  useAutoGate("fundamentals", "safety-and-self-protection");
-
   // Gate: must have completed "Tools & Supplies"
   useLessonGate({
     moduleId: "fundamentals",

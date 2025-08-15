@@ -9,8 +9,6 @@ import useLessonGate from "@/hooks/useLessonGate";
 import { getLessons } from "@/lib/modules";
 
 export default function CommonFurnitureAndFixtures() {
-  useAutoGate("fundamentals", "common-furniture-and-fixtures");
-
   // Gate: must have completed "Handling Different Rooms"
   useLessonGate({
     moduleId: "fundamentals",

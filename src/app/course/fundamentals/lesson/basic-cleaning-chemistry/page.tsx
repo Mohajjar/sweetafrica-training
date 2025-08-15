@@ -6,9 +6,14 @@ import useAutoGate from "@/hooks/useAutoGate";
 import LessonFooter from "@/components/LessonFooter";
 import AuthGuard from "@/components/AuthGuard";
 import { getLessons } from "@/lib/modules";
+import useLessonGate from "@/hooks/useLessonGate"; // 👈 Import the hook
 
 export default function BasicCleaningChemistry() {
-  useAutoGate("fundamentals", "basic-cleaning-chemistry"); // moduleId, currentLessonId
+  // 🔒 Gate: must finish "Defining Cleaning" before this lesson
+  useLessonGate({
+    moduleId: "fundamentals",
+    requireCompleted: ["defining-cleaning"],
+  });
 
   return (
     <AuthGuard>

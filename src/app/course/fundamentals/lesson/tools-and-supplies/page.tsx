@@ -9,8 +9,6 @@ import LessonFooter from "@/components/LessonFooter";
 import useAutoGate from "@/hooks/useAutoGate";
 
 export default function ToolsAndSupplies() {
-  useAutoGate("fundamentals", "tools-and-supplies");
-  // 🔒 Gate: must finish Basic Cleaning Chemistry before this lesson
   useLessonGate({
     moduleId: "fundamentals",
     requireCompleted: ["basic-cleaning-chemistry"],

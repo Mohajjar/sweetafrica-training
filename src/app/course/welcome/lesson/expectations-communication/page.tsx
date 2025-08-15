@@ -1,52 +1,19 @@
 "use client";
 import AuthGuard from "@/components/AuthGuard";
 import Shell from "@/components/Shell";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { markLessonComplete } from "@/lib/progress";
-import Link from "next/link"; // Use Link for the back button
 import CourseTracker from "@/components/CourseTracker";
 import useLessonGate from "@/hooks/useLessonGate";
-import useAutoGate from "@/hooks/useAutoGate";
 import LessonFooter from "@/components/LessonFooter";
 import { getLessons } from "@/lib/modules";
 
 export default function ExpectationsCommunication() {
-  useAutoGate("welcome", "expectations-communication");
   // Gate: must have completed Lessons 1 and 2
   useLessonGate({
     moduleId: "welcome",
     requireCompleted: ["who-we-are", "vision-mission-values"],
   });
 
-  const router = useRouter();
-
-  // Local state
-  const [uid, setUid] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [ack, setAck] = useState(false);
-
-  const canFinish = ack && !saving;
-
-  // Track signed-in user id for writes
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
-    return () => unsub();
-  }, []);
-
-  const handleFinish = async () => {
-    if (!uid) return;
-    setSaving(true);
-    try {
-      await markLessonComplete(uid, "welcome", "expectations-communication");
-      router.push("/course/welcome");
-    } finally {
-      setSaving(false);
-    }
-  };
-
+  // The automatic completion logic has been removed from here.
   return (
     <AuthGuard>
       <Shell>

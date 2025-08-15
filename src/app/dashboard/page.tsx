@@ -3,7 +3,7 @@
 import AuthGuard from "@/components/AuthGuard";
 import Shell from "@/components/Shell";
 import Link from "next/link";
-import { FaPlay, FaCheckCircle } from "react-icons/fa";
+import { FaPlay, FaCheckCircle, FaLock } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -27,6 +27,13 @@ const LESSON_LABEL_WELCOME: Record<string, string> = {
 const LESSON_LABEL_FUNDAMENTALS: Record<string, string> = {
   "defining-cleaning": "Defining Cleaning",
   "basic-cleaning-chemistry": "Basic Cleaning Chemistry",
+  "tools-and-supplies": "Tools & Supplies",
+  "safety-and-self-protection": "Safety and Self-Protection",
+  "cleaning-systems-and-flow": "Cleaning Systems and Flow",
+  "understanding-dirt-and-debris": "Understanding Dirt & Debris",
+  "handling-different-rooms": "Handling Different Rooms",
+  "common-furniture-and-fixtures": "Common Furniture & Fixtures",
+  "final-inspection-habits": "Final Inspection Habits",
 };
 
 export default function Dashboard() {
@@ -51,65 +58,61 @@ export default function Dashboard() {
       if (!u) return;
 
       // Welcome progress
-      {
-        const total = getTotalLessons("welcome") || 3;
-        const ref = doc(db, "users", u.uid, "progress", "welcome");
-        const unsub = onSnapshot(ref, (snap) => {
-          const done = (snap.data()?.completedLessonIds ?? []) as string[];
-          const progress = Math.min(
-            100,
-            Math.round((done.length / total) * 100)
-          );
-          const last = done.length ? done[done.length - 1] : null;
+      const totalWelcome = getTotalLessons("welcome");
+      const welcomeRef = doc(db, "users", u.uid, "progress", "welcome");
+      const unsubWelcome = onSnapshot(welcomeRef, (snap) => {
+        const done = (snap.data()?.completedLessonIds ?? []) as string[];
+        const progress = Math.min(
+          100,
+          Math.round((done.length / totalWelcome) * 100)
+        );
+        const last = done.length ? done[done.length - 1] : null;
 
-          setWelcomeStatus((prev) => ({
-            ...prev,
-            lastLesson: last
-              ? LESSON_LABEL_WELCOME[last] ?? last
-              : "Not started",
-            progress,
-            isCompleted: progress === 100,
-          }));
-        });
-        // clean up when auth changes
-        return () => unsub();
-      }
-    });
-
-    return () => unsubAuth();
-  }, []);
-
-  useEffect(() => {
-    const unsubAuth = onAuthStateChanged(auth, (u) => {
-      if (!u) return;
+        setWelcomeStatus((prev) => ({
+          ...prev,
+          lastLesson: last ? LESSON_LABEL_WELCOME[last] ?? last : "Not started",
+          progress,
+          isCompleted: progress === 100,
+        }));
+      });
 
       // Fundamentals progress
-      {
-        const total = getTotalLessons("fundamentals") || 1;
-        const ref = doc(db, "users", u.uid, "progress", "fundamentals");
-        const unsub = onSnapshot(ref, (snap) => {
-          const done = (snap.data()?.completedLessonIds ?? []) as string[];
-          const progress = Math.min(
-            100,
-            Math.round((done.length / total) * 100)
-          );
-          const last = done.length ? done[done.length - 1] : null;
+      const totalFundamentals = getTotalLessons("fundamentals");
+      const fundamentalsRef = doc(
+        db,
+        "users",
+        u.uid,
+        "progress",
+        "fundamentals"
+      );
+      const unsubFundamentals = onSnapshot(fundamentalsRef, (snap) => {
+        const done = (snap.data()?.completedLessonIds ?? []) as string[];
+        const progress = Math.min(
+          100,
+          Math.round((done.length / totalFundamentals) * 100)
+        );
+        const last = done.length ? done[done.length - 1] : null;
 
-          setFundamentalsStatus((prev) => ({
-            ...prev,
-            lastLesson: last
-              ? LESSON_LABEL_FUNDAMENTALS[last] ?? last
-              : "Not started",
-            progress,
-            isCompleted: progress === 100,
-          }));
-        });
-        return () => unsub();
-      }
+        setFundamentalsStatus((prev) => ({
+          ...prev,
+          lastLesson: last
+            ? LESSON_LABEL_FUNDAMENTALS[last] ?? last
+            : "Not started",
+          progress,
+          isCompleted: progress === 100,
+        }));
+      });
+
+      return () => {
+        unsubWelcome();
+        unsubFundamentals();
+      };
     });
 
     return () => unsubAuth();
   }, []);
+
+  const canStartFundamentals = welcomeStatus.isCompleted;
 
   return (
     <AuthGuard>
@@ -125,13 +128,12 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Welcome Card */}
             <ModuleCard status={welcomeStatus} />
+            <ModuleCard
+              status={fundamentalsStatus}
+              isLocked={!canStartFundamentals}
+            />
 
-            {/* Fundamentals Card */}
-            <ModuleCard status={fundamentalsStatus} />
-
-            {/* Placeholder for future features */}
             <div className="bg-white rounded-xl shadow-md border p-6 md:p-8 flex flex-col items-center justify-center text-center text-gray-500 lg:col-span-2">
               <p className="text-lg">More features and courses coming soon!</p>
             </div>
@@ -142,15 +144,44 @@ export default function Dashboard() {
   );
 }
 
-function ModuleCard({ status }: { status: CourseStatus }) {
+function ModuleCard({
+  status,
+  isLocked = false,
+}: {
+  status: CourseStatus;
+  isLocked?: boolean;
+}) {
+  const linkContent = (
+    <div
+      className={`mt-6 inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold shadow-md transition-colors ${
+        isLocked
+          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+          : "bg-green-500 text-white hover:bg-green-600"
+      }`}
+    >
+      {isLocked
+        ? "Complete Previous Module"
+        : status.progress > 0
+        ? "Continue Training"
+        : "Start Training"}{" "}
+      →
+    </div>
+  );
+
   return (
-    <div className="bg-white rounded-xl shadow-md border p-6 md:p-8">
+    <div
+      className={`bg-white rounded-xl shadow-md border p-6 md:p-8 ${
+        isLocked ? "opacity-60" : ""
+      }`}
+    >
       <div className="flex items-start justify-between">
         <div>
           <div className="text-sm text-gray-500 mb-1">Your Training</div>
           <h3 className="text-2xl font-bold text-gray-900">{status.title}</h3>
         </div>
-        {status.isCompleted ? (
+        {isLocked ? (
+          <FaLock className="text-gray-400 text-3xl mt-1" />
+        ) : status.isCompleted ? (
           <FaCheckCircle className="text-green-500 text-3xl mt-1" />
         ) : (
           <FaPlay className="text-green-500 text-3xl mt-1" />
@@ -158,7 +189,9 @@ function ModuleCard({ status }: { status: CourseStatus }) {
       </div>
 
       <p className="mt-4 text-gray-600">
-        {status.progress > 0 ? (
+        {isLocked ? (
+          "You must complete the 'Welcome' module first."
+        ) : status.progress > 0 ? (
           <>
             You last worked on:{" "}
             <span className="font-medium text-gray-800">
@@ -166,7 +199,7 @@ function ModuleCard({ status }: { status: CourseStatus }) {
             </span>
           </>
         ) : (
-          <>You haven’t started yet. Begin with the first lesson.</>
+          "You haven’t started yet. Begin with the first lesson."
         )}
       </p>
 
@@ -183,12 +216,7 @@ function ModuleCard({ status }: { status: CourseStatus }) {
         </div>
       </div>
 
-      <Link
-        href={status.link}
-        className="mt-6 inline-flex items-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors text-white px-6 py-3 text-sm font-semibold shadow-md"
-      >
-        {status.progress > 0 ? "Continue Training" : "Start Training"} →
-      </Link>
+      {isLocked ? linkContent : <Link href={status.link}>{linkContent}</Link>}
     </div>
   );
 }

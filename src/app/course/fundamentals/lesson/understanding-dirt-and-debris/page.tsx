@@ -9,8 +9,6 @@ import useLessonGate from "@/hooks/useLessonGate";
 import { getLessons } from "@/lib/modules";
 
 export default function UnderstandingDirtAndDebris() {
-  useAutoGate("fundamentals", "understanding-dirt-and-debris");
-
   // Gate: must have completed "Cleaning Systems and Flow"
   useLessonGate({
     moduleId: "fundamentals",

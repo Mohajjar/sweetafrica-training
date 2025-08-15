@@ -9,8 +9,6 @@ import useLessonGate from "@/hooks/useLessonGate";
 import { getLessons } from "@/lib/modules";
 
 export default function FinalInspectionHabits() {
-  useAutoGate("fundamentals", "final-inspection-habits");
-
   // Gate: must have completed "Common Furniture & Fixtures"
   useLessonGate({
     moduleId: "fundamentals",

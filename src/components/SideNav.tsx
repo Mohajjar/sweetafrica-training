@@ -15,7 +15,13 @@ export default function SideNav() {
     <aside className="hidden md:flex flex-col w-64 min-h-screen border-r bg-white">
       <div className="p-6 border-b flex-shrink-0">
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Logo" width={200} height={64} />
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={200}
+            height={64}
+            className="h-auto"
+          />
         </Link>
       </div>
       <nav className="p-4 flex-1">

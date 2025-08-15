@@ -8,8 +8,6 @@ import useAutoGate from "@/hooks/useAutoGate";
 import { getLessons } from "@/lib/modules";
 
 export default function DefiningCleaning() {
-  useAutoGate("fundamentals", "defining-cleaning");
-
   return (
     <AuthGuard>
       <div className="bg-gray-50 min-h-screen">

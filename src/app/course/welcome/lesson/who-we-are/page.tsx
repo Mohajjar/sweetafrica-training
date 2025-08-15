@@ -1,30 +1,12 @@
 "use client";
 import AuthGuard from "@/components/AuthGuard";
 import Shell from "@/components/Shell";
-import QuoteCard from "@/components/Lesson/QuoteCard";
-import VideoEmbed from "@/components/Lesson/VideoEmbed";
-import LessonNav from "@/components/Lesson/LessonNav";
-import { useEffect } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { markLessonComplete } from "@/lib/progress";
-import Link from "next/link";
 import CourseTracker from "@/components/CourseTracker";
-import useAutoGate from "@/hooks/useAutoGate";
 import LessonFooter from "@/components/LessonFooter";
 import { getLessons } from "@/lib/modules";
 
 export default function WhoWeAre() {
-  useAutoGate("welcome", "who-we-are");
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      if (!u) return;
-      // Mark as complete as soon as lesson loads (we can switch to “on scroll end” later)
-      await markLessonComplete(u.uid, "welcome", "who-we-are");
-    });
-    return () => unsub();
-  }, []);
-
+  // The automatic completion logic has been removed from here.
   return (
     <AuthGuard>
       <div className="bg-gray-50 min-h-screen">

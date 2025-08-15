@@ -9,8 +9,6 @@ import useLessonGate from "@/hooks/useLessonGate";
 import { getLessons } from "@/lib/modules";
 
 export default function HandlingDifferentRooms() {
-  useAutoGate("fundamentals", "handling-different-rooms");
-
   // Gate: must have completed "Understanding Dirt & Debris"
   useLessonGate({
     moduleId: "fundamentals",
