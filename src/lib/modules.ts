@@ -1,13 +1,11 @@
-// ----- types you already have -----
+// src/lib/modules.ts
 export type ModuleId = "welcome" | "fundamentals";
 
-// (You likely already have this too)
 export const moduleTitle = {
   welcome: "Welcome to Sweet Africa Global",
   fundamentals: "Fundamentals of Cleaning",
 } as const;
 
-// ----- NEW: per-module lesson list -----
 export type LessonInfo = { id: string; title: string; href: string };
 
 const moduleLessons: Record<ModuleId, LessonInfo[]> = {
@@ -43,6 +41,16 @@ const moduleLessons: Record<ModuleId, LessonInfo[]> = {
       id: "tools-and-supplies",
       title: "Tools & Supplies",
       href: "/course/fundamentals/lesson/tools-and-supplies",
+    },
+    {
+      id: "safety-and-self-protection",
+      title: "Safety and Self-Protection",
+      href: "/course/fundamentals/lesson/safety-and-self-protection",
+    },
+    {
+      id: "cleaning-systems-and-flow",
+      title: "Cleaning Systems and Flow",
+      href: "/course/fundamentals/lesson/cleaning-systems-and-flow",
     },
     // Add more Fundamentals lessons here in order as you create them
   ],
