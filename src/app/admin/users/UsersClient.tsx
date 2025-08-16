@@ -150,7 +150,6 @@ function UsersTable() {
           />
         </div>
       </header>
-
       <div className="overflow-x-auto rounded-xl border bg-white">
         <table className="min-w-full text-sm text-gray-800">
           <thead className="bg-gray-50 text-gray-700">
@@ -186,7 +185,7 @@ function UsersTable() {
                           href={detailHref}
                           className="hover:underline"
                           title="View user details"
-                        >
+                          legacyBehavior>
                           {u.displayName || "—"}
                         </Link>
                       </div>
@@ -196,7 +195,7 @@ function UsersTable() {
                           href={detailHref}
                           className="hover:underline"
                           title="View user details"
-                        >
+                          legacyBehavior>
                           {u.id}
                         </Link>
                       </div>

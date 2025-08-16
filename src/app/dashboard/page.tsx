@@ -185,7 +185,6 @@ function ModuleCard({
           <FaPlay className="text-green-500 text-3xl mt-1" />
         )}
       </div>
-
       <p className="mt-4 text-gray-600">
         {isLocked ? (
           lockedReason
@@ -200,7 +199,6 @@ function ModuleCard({
           "You haven’t started yet. Begin with the first lesson."
         )}
       </p>
-
       <div className="mt-6">
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
@@ -213,8 +211,7 @@ function ModuleCard({
           <span>{status.progress}% complete</span>
         </div>
       </div>
-
-      {isLocked ? linkContent : <Link href={status.link}>{linkContent}</Link>}
+      {isLocked ? linkContent : <Link href={status.link} legacyBehavior>{linkContent}</Link>}
     </div>
   );
 }

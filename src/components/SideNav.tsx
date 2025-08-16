@@ -15,7 +15,7 @@ export default function SideNav() {
   return (
     <aside className="hidden md:flex flex-col w-64 min-h-screen border-r bg-white">
       <div className="p-6 border-b flex-shrink-0">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2" legacyBehavior>
           <Image
             src="/logo.png"
             alt="Logo"
@@ -38,6 +38,7 @@ export default function SideNav() {
                     ? "bg-green-100 text-green-700 font-semibold"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
+              legacyBehavior
             >
               <span className="text-sm">{label}</span>
             </Link>

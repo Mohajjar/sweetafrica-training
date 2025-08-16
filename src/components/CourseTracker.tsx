@@ -10,11 +10,8 @@ import type { ModuleId } from "@/lib/curriculum";
 
 type Lesson = { id: string; title: string; href: string };
 type Props = {
-  /** Firestore module id */
   moduleId: ModuleId;
-  /** Lessons in unlock order */
   lessons: Lesson[];
-  /** Which lesson is currently open */
   currentLessonId?: string;
 };
 
@@ -26,13 +23,11 @@ export default function CourseTracker({
   const [completed, setCompleted] = useState<string[]>([]);
   const [uid, setUid] = useState<string | null>(null);
 
-  // Get user id
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUid(u?.uid ?? null));
     return () => unsub();
   }, []);
 
-  // Subscribe to this module's progress
   useEffect(() => {
     if (!uid) return;
     const ref = doc(db, "users", uid, "progress", moduleId);
@@ -42,14 +37,12 @@ export default function CourseTracker({
     return () => unsub();
   }, [uid, moduleId]);
 
-  // Compute unlocks + percent
   const { percent, unlockedIds } = useMemo(() => {
     const done = new Set(completed);
     const unlocked = new Set<string>();
     let gateOpen = true;
     for (const l of lessons) {
       if (gateOpen) unlocked.add(l.id);
-      // gate stays open only if this lesson is done
       gateOpen = gateOpen && done.has(l.id);
     }
     const pct = Math.min(
@@ -109,12 +102,14 @@ export default function CourseTracker({
                 href={l.href}
                 className="flex items-center gap-2 hover:underline"
               >
-                {isDone ? (
-                  <FaCheckCircle className="text-green-500" />
-                ) : (
-                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-300" />
-                )}
-                <span>{l.title}</span>
+                <>
+                  {isDone ? (
+                    <FaCheckCircle className="text-green-500" />
+                  ) : (
+                    <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-300" />
+                  )}
+                  <span>{l.title}</span>
+                </>
               </Link>
               <span className="text-[11px] text-gray-500">
                 {isDone ? "Done" : `Lesson ${i + 1}`}

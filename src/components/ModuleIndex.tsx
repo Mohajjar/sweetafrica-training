@@ -134,7 +134,7 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
                       : "bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none"
                   }`}
                   aria-disabled={!isComplete}
-                >
+                  legacyBehavior>
                   {isComplete ? "Review & Start Quiz →" : "Locked"}
                 </Link>
               </div>

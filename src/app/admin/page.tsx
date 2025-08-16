@@ -23,7 +23,7 @@ export default function AdminHome() {
             <Link
               href="/admin/users"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+              legacyBehavior>
               <div className="text-sm text-gray-500">Directory</div>
               <h3 className="text-xl font-semibold text-gray-900 mt-1">
                 Users
@@ -40,7 +40,7 @@ export default function AdminHome() {
             <Link
               href="/admin/progress"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+              legacyBehavior>
               <div className="text-sm text-gray-500">Analytics</div>
               <h3 className="text-xl font-semibold text-gray-900 mt-1">
                 Progress
@@ -57,7 +57,7 @@ export default function AdminHome() {
             <Link
               href="/admin/content"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+              legacyBehavior>
               <div className="text-sm text-gray-500">Lessons</div>
               <h3 className="text-xl font-semibold text-gray-900 mt-1">
                 Content Manager
@@ -74,7 +74,7 @@ export default function AdminHome() {
             <Link
               href="/admin/quizzes"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+              legacyBehavior>
               <div className="text-sm text-gray-500">Assessments</div>
               <h3 className="text-xl font-semibold text-gray-900 mt-1">
                 Quiz Builder
@@ -91,7 +91,7 @@ export default function AdminHome() {
             <Link
               href="/admin/branding"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+              legacyBehavior>
               <div className="text-sm text-gray-500">Appearance</div>
               <h3 className="text-xl font-semibold text-gray-900 mt-1">
                 Branding
@@ -108,7 +108,7 @@ export default function AdminHome() {
             <Link
               href="/admin/announcements"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+              legacyBehavior>
               <div className="text-sm text-gray-500">Comms</div>
               <h3 className="text-xl font-semibold text-gray-900 mt-1">
                 Announcements

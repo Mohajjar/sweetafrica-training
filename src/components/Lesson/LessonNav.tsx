@@ -27,7 +27,7 @@ export default function LessonNav({
           <Link
             href={nextHref}
             className="inline-flex items-center rounded-lg bg-green-500 hover:bg-green-600 transition-colors text-white px-6 py-3 text-sm font-semibold shadow-md"
-          >
+            legacyBehavior>
             {nextLabel} →
           </Link>
         )}

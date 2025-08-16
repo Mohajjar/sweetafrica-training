@@ -150,9 +150,9 @@ export default function QuizSuccessPage() {
               </div>
             ) : (
               // If they didn't pass, we redirect; this is a tiny fallback
-              <div className="mx-auto max-w-xl text-center bg-white border rounded-xl shadow p-10">
+              (<div className="mx-auto max-w-xl text-center bg-white border rounded-xl shadow p-10">
                 <p className="text-gray-600">Redirecting…</p>
-              </div>
+              </div>)
             )}
           </div>
         </div>
