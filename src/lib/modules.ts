@@ -90,7 +90,21 @@ const moduleLessons: Record<ModuleId, LessonInfo[]> = {
       title: "Communication On the Job",
       href: "/course/professionalism/lesson/communication-on-the-job",
     },
-    // Add more Professionalism lessons here
+    {
+      id: "pre-clean-walkthroughs",
+      title: "Pre-Clean Walkthroughs",
+      href: "/course/professionalism/lesson/pre-clean-walkthroughs",
+    },
+    {
+      id: "managing-expectations-and-boundaries",
+      title: "Managing Expectations & Boundaries",
+      href: "/course/professionalism/lesson/managing-expectations-and-boundaries",
+    },
+    {
+      id: "when-something-goes-wrong",
+      title: "When Something Goes Wrong",
+      href: "/course/professionalism/lesson/when-something-goes-wrong",
+    },
   ],
 };
 
