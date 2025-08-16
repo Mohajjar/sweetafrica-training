@@ -211,7 +211,7 @@ function ModuleCard({
           <span>{status.progress}% complete</span>
         </div>
       </div>
-      {isLocked ? linkContent : <Link href={status.link} legacyBehavior>{linkContent}</Link>}
+      {isLocked ? linkContent : <Link href={status.link}>{linkContent}</Link>}
     </div>
   );
 }

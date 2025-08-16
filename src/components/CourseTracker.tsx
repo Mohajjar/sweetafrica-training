@@ -98,18 +98,15 @@ export default function CourseTracker({
                 isCurrent ? "text-gray-900 font-medium" : "text-gray-700"
               }`}
             >
-              <Link
-                href={l.href}
-                className="flex items-center gap-2 hover:underline"
-              >
-                <>
+              <Link href={l.href}>
+                <span className="flex items-center gap-2 hover:underline">
                   {isDone ? (
                     <FaCheckCircle className="text-green-500" />
                   ) : (
                     <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-300" />
                   )}
                   <span>{l.title}</span>
-                </>
+                </span>
               </Link>
               <span className="text-[11px] text-gray-500">
                 {isDone ? "Done" : `Lesson ${i + 1}`}

@@ -46,6 +46,7 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
   const hasQuiz: Record<ModuleId, boolean> = {
     welcome: true,
     fundamentals: true,
+    professionalism: false,
   };
   const total = getTotalLessons(moduleId);
   const isComplete = total ? completed.length >= total : false;
@@ -102,9 +103,7 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
                   {isLessonLocked ? (
                     linkContent
                   ) : (
-                    <Link href={l.href} legacyBehavior>
-                      {linkContent}
-                    </Link>
+                    <Link href={l.href}>{linkContent}</Link>
                   )}
                 </article>
               );
@@ -134,7 +133,7 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
                       : "bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none"
                   }`}
                   aria-disabled={!isComplete}
-                  legacyBehavior>
+                >
                   {isComplete ? "Review & Start Quiz →" : "Locked"}
                 </Link>
               </div>
