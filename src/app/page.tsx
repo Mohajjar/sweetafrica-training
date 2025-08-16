@@ -1,97 +1,140 @@
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
-// (Keeping these imports in case you later re-enable the landing UI)
+import Shell from "@/components/Shell";
+import AdminGuard from "@/components/AdminGuard";
 import Link from "next/link";
-import Image from "next/image";
-import { FaUserCircle, FaBookOpen } from "react-icons/fa";
 
-export default function Home() {
-  const router = useRouter();
-
-  // Force redirect from root to /login
-  useEffect(() => {
-    router.replace("/login");
-  }, [router]);
-
-  // Do not render the landing UI while redirecting
-  return null;
-
-  /* ------------------ ORIGINAL LANDING UI (kept intact) ------------------
+export default function AdminHome() {
   return (
-    <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-10">
-          <Link href="/">
-            <div className="flex items-center gap-2">
-              <Image
-                src="/logo.svg"
-                alt="Sweet Africa Global Logo"
-                width={40}
-                height={40}
-              />
-              <span className="text-xl font-bold text-gray-900">
-                Sweet Africa Training
-              </span>
-            </div>
-          </Link>
-          <div className="flex items-center gap-4">
-            <button className="text-gray-600 hover:text-gray-900 transition-colors">
-              <FaUserCircle size={28} />
-            </button>
-          </div>
-        </header>
+    <AdminGuard>
+      <Shell>
+        <section className="space-y-8">
+          <header>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Admin Console
+            </h1>
+            <p className="text-gray-600 mt-2 text-lg">
+              Manage users, progress, quizzes, and platform settings.
+            </p>
+          </header>
 
-        <main>
-          <div className="card shadow-soft p-8 md:p-12 mb-8 bg-green-500 text-white">
-            <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="flex-1">
-                <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome!</h1>
-                <p className="text-lg font-light opacity-90 max-w-2xl">
-                  Welcome to the Sweet Africa Global training platform. Your journey to excellence starts here.
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Users */}
+            <Link
+              href="/admin/users"
+              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
+            >
+              <div>
+                <div className="text-sm text-gray-500">Directory</div>
+                <h3 className="text-xl font-semibold text-gray-900 mt-1">
+                  Users
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  View accounts, search, and manage admin access.
                 </p>
-                <Link
-                  href="/course/welcome"
-                  className="mt-6 inline-flex items-center rounded-lg bg-white text-green-600 hover:bg-gray-100 transition-colors px-6 py-3 text-sm font-semibold shadow-md"
-                >
-                  <FaBookOpen className="mr-2" /> Start Your First Course
-                </Link>
+                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
+                  Open →
+                </span>
               </div>
-            </div>
+            </Link>
+
+            {/* Progress */}
+            <Link
+              href="/admin/progress"
+              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
+            >
+              <div>
+                <div className="text-sm text-gray-500">Analytics</div>
+                <h3 className="text-xl font-semibold text-gray-900 mt-1">
+                  Progress
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  See completion by user or section; export CSV.
+                </p>
+                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
+                  Open →
+                </span>
+              </div>
+            </Link>
+
+            {/* Content */}
+            <Link
+              href="/admin/content"
+              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
+            >
+              <div>
+                <div className="text-sm text-gray-500">Lessons</div>
+                <h3 className="text-xl font-semibold text-gray-900 mt-1">
+                  Content Manager
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  Edit lesson text, reorder, and manage assets.
+                </p>
+                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
+                  Open →
+                </span>
+              </div>
+            </Link>
+
+            {/* Quizzes */}
+            <Link
+              href="/admin/quizzes"
+              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
+            >
+              <div>
+                <div className="text-sm text-gray-500">Assessments</div>
+                <h3 className="text-xl font-semibold text-gray-900 mt-1">
+                  Quiz Builder
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  Add questions, set passing %, and preview.
+                </p>
+                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
+                  Open →
+                </span>
+              </div>
+            </Link>
+
+            {/* Branding */}
+            <Link
+              href="/admin/branding"
+              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
+            >
+              <div>
+                <div className="text-sm text-gray-500">Appearance</div>
+                <h3 className="text-xl font-semibold text-gray-900 mt-1">
+                  Branding
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  Update logo, colors, and welcome text.
+                </p>
+                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
+                  Open →
+                </span>
+              </div>
+            </Link>
+
+            {/* Announcements */}
+            <Link
+              href="/admin/announcements"
+              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
+            >
+              <div>
+                <div className="text-sm text-gray-500">Comms</div>
+                <h3 className="text-xl font-semibold text-gray-900 mt-1">
+                  Announcements
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  Post a banner to the dashboard for all users.
+                </p>
+                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
+                  Open →
+                </span>
+              </div>
+            </Link>
           </div>
-
-          <section className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Progress</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="card shadow-soft p-6">
-                <h3 className="text-lg font-semibold text-gray-900">Module 1: Welcome</h3>
-                <p className="text-sm text-gray-600 mt-1 mb-4">You have completed 1 of 3 lessons.</p>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-green-500 h-2.5 rounded-full" style={{ width: "33%" }} />
-                </div>
-              </div>
-
-              <div className="card shadow-soft p-6 opacity-60">
-                <h3 className="text-lg font-semibold text-gray-900">Module 2: Cleaning Basics</h3>
-                <p className="text-sm text-gray-600 mt-1 mb-4">Not yet started.</p>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-green-500 h-2.5 rounded-full" style={{ width: "0%" }} />
-                </div>
-              </div>
-
-              <div className="card shadow-soft p-6 opacity-60">
-                <h3 className="text-lg font-semibold text-gray-900">Module 3: Advanced Techniques</h3>
-                <p className="text-sm text-gray-600 mt-1 mb-4">Not yet started.</p>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className="bg-green-500 h-2.5 rounded-full" style={{ width: "0%" }} />
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
-    </div>
+        </section>
+      </Shell>
+    </AdminGuard>
   );
-  ------------------------------------------------------------------------ */
 }

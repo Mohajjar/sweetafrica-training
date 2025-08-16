@@ -25,8 +25,8 @@ import type { ModuleId } from "@/lib/curriculum";
 import { curriculum, getModuleTitle, getTotalLessons } from "@/lib/curriculum";
 
 /** -------------------------------
- *  TYPES
- *  ------------------------------*/
+ * TYPES
+ * ------------------------------*/
 type UserRow = {
   id: string;
   email?: string;
@@ -59,8 +59,8 @@ type Attempt = {
 const ALL_MODULE_IDS = Object.keys(curriculum) as ModuleId[];
 
 /** ===========================================================
- *  UsersClient: decides list vs detail using ?uid=...
- *  =========================================================== */
+ * UsersClient: decides list vs detail using ?uid=...
+ * =========================================================== */
 export default function UsersClient() {
   const router = useRouter();
   const search = useSearchParams();
@@ -75,8 +75,8 @@ export default function UsersClient() {
 }
 
 /** -------------------------------
- *  Users Table (no uid)
- *  ------------------------------*/
+ * Users Table (no uid)
+ * ------------------------------*/
 function UsersTable() {
   const [me, setMe] = useState<string | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
@@ -185,8 +185,8 @@ function UsersTable() {
                           href={detailHref}
                           className="hover:underline"
                           title="View user details"
-                          legacyBehavior>
-                          {u.displayName || "—"}
+                        >
+                          <span>{u.displayName || "—"}</span>
                         </Link>
                       </div>
                       <div className="text-xs text-gray-500">
@@ -195,8 +195,8 @@ function UsersTable() {
                           href={detailHref}
                           className="hover:underline"
                           title="View user details"
-                          legacyBehavior>
-                          {u.id}
+                        >
+                          <span>{u.id}</span>
                         </Link>
                       </div>
                     </td>
@@ -259,8 +259,8 @@ function UsersTable() {
 }
 
 /** -------------------------------
- *  User Detail (when uid present)
- *  ------------------------------*/
+ * User Detail (when uid present)
+ * ------------------------------*/
 function AdminUserDetail({ uid, onBack }: { uid: string; onBack: () => void }) {
   const [userDoc, setUserDoc] = useState<UserDoc | null>(null);
   const [summaries, setSummaries] = useState<Record<ModuleId, ModuleSummary>>(

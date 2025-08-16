@@ -12,7 +12,7 @@ export default function WhenSomethingGoesWrong() {
   // Gate: must have completed the previous lesson
   useLessonGate({
     moduleId: "professionalism",
-    requireCompleted: ["client-interaction-and-satisfaction"],
+    requireCompleted: ["managing-expectations-and-boundaries"],
   });
 
   const responseSteps = [
