@@ -125,3 +125,64 @@ export const fundamentalsQuiz: QuizQuestion[] = [
     answerIndex: 3,
   },
 ];
+
+/** Final quiz for the "professionalism" module */
+export const professionalismQuiz: QuizQuestion[] = [
+  {
+    id: "p1",
+    prompt:
+      "What is the main difference between a standard clean and a deep clean?",
+    options: [
+      "The products used",
+      "The time of day the cleaning is done",
+      "Deep cleaning is more thorough and includes areas not covered in a standard clean",
+      "Standard cleaning is only for commercial properties",
+    ],
+    answerIndex: 2,
+  },
+  {
+    id: "p2",
+    prompt: "What is the first step in a short-term rental turnover?",
+    options: [
+      "Restocking amenities",
+      "Cleaning the bathroom",
+      "Entry and assessment for damage",
+      "Making the beds",
+    ],
+    answerIndex: 2,
+  },
+  {
+    id: "p3",
+    prompt: "Which of the following is a key part of a move-in/move-out clean?",
+    options: [
+      "Watering the plants",
+      "Cleaning inside cabinets and appliances",
+      "Organizing the client's personal belongings",
+      "Doing the laundry",
+    ],
+    answerIndex: 1,
+  },
+  {
+    id: "p4",
+    prompt: "What is a key priority in commercial cleaning?",
+    options: [
+      "Making the space look nice for photos",
+      "Cleaning without disrupting the business's operations",
+      "Using the strongest possible chemicals",
+      "Cleaning only during business hours",
+    ],
+    answerIndex: 1,
+  },
+  {
+    id: "p5",
+    prompt:
+      "When cleaning around pets and children, what is the most important consideration?",
+    options: [
+      "Finishing the job as quickly as possible",
+      "Using products that are non-toxic and safe",
+      "Making sure the pets and children are in another room",
+      "Using scented products to cover up pet odors",
+    ],
+    answerIndex: 1,
+  },
+];

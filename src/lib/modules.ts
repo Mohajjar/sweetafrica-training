@@ -105,6 +105,41 @@ const moduleLessons: Record<ModuleId, LessonInfo[]> = {
       title: "When Something Goes Wrong",
       href: "/course/professionalism/lesson/when-something-goes-wrong",
     },
+    {
+      id: "the-core-difference-between-standard-and-deep-cleaning",
+      title: "The Core Difference Between Standard and Deep Cleaning",
+      href: "/course/professionalism/lesson/the-core-difference-between-standard-and-deep-cleaning",
+    },
+    {
+      id: "products-and-setup-for-deep-cleaning",
+      title: "Products & Setup for Deep Cleaning",
+      href: "/course/professionalism/lesson/products-and-setup-for-deep-cleaning",
+    },
+    {
+      id: "deep-clean-timing-and-room-pacing",
+      title: "Deep Clean Timing & Room Pacing",
+      href: "/course/professionalism/lesson/deep-clean-timing-and-room-pacing",
+    },
+    {
+      id: "residential-cleaning",
+      title: "Residential Cleaning",
+      href: "/course/professionalism/lesson/residential-cleaning",
+    },
+    {
+      id: "commercial-cleaning",
+      title: "Commercial Cleaning",
+      href: "/course/professionalism/lesson/commercial-cleaning",
+    },
+    {
+      id: "short-term-rental-turnovers",
+      title: "Short-Term Rental Turnovers",
+      href: "/course/professionalism/lesson/short-term-rental-turnovers",
+    },
+    {
+      id: "move-in-move-out-cleaning",
+      title: "Move-In / Move-Out Cleaning",
+      href: "/course/professionalism/lesson/move-in-move-out-cleaning",
+    },
   ],
 };
 

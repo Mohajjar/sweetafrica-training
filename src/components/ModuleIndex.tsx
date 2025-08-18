@@ -46,7 +46,7 @@ export default function ModuleIndex({ moduleId }: { moduleId: ModuleId }) {
   const hasQuiz: Record<ModuleId, boolean> = {
     welcome: true,
     fundamentals: true,
-    professionalism: false,
+    professionalism: true,
   };
   const total = getTotalLessons(moduleId);
   const isComplete = total ? completed.length >= total : false;

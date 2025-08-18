@@ -19,7 +19,7 @@ export default function AdminHome() {
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Users */}
+            {/* Users - Active */}
             <Link
               href="/admin/users"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
@@ -38,100 +38,65 @@ export default function AdminHome() {
               </div>
             </Link>
 
-            {/* Progress */}
-            <Link
-              href="/admin/progress"
-              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+            {/* Progress - Locked */}
+            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
               <div>
                 <div className="text-sm text-gray-500">Analytics</div>
                 <h3 className="text-xl font-semibold text-gray-900 mt-1">
                   Progress
                 </h3>
-                <p className="text-sm text-gray-600 mt-2">
-                  See completion by user or section; export CSV.
-                </p>
-                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
-                  Open →
-                </span>
+                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
+                <span className="mt-4 inline-block text-gray-500">Locked</span>
               </div>
-            </Link>
+            </div>
 
-            {/* Content */}
-            <Link
-              href="/admin/content"
-              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+            {/* Content - Locked */}
+            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
               <div>
                 <div className="text-sm text-gray-500">Lessons</div>
                 <h3 className="text-xl font-semibold text-gray-900 mt-1">
                   Content Manager
                 </h3>
-                <p className="text-sm text-gray-600 mt-2">
-                  Edit lesson text, reorder, and manage assets.
-                </p>
-                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
-                  Open →
-                </span>
+                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
+                <span className="mt-4 inline-block text-gray-500">Locked</span>
               </div>
-            </Link>
+            </div>
 
-            {/* Quizzes */}
-            <Link
-              href="/admin/quizzes"
-              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+            {/* Quizzes - Locked */}
+            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
               <div>
                 <div className="text-sm text-gray-500">Assessments</div>
                 <h3 className="text-xl font-semibold text-gray-900 mt-1">
                   Quiz Builder
                 </h3>
-                <p className="text-sm text-gray-600 mt-2">
-                  Add questions, set passing %, and preview.
-                </p>
-                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
-                  Open →
-                </span>
+                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
+                <span className="mt-4 inline-block text-gray-500">Locked</span>
               </div>
-            </Link>
+            </div>
 
-            {/* Branding */}
-            <Link
-              href="/admin/branding"
-              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+            {/* Branding - Locked */}
+            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
               <div>
                 <div className="text-sm text-gray-500">Appearance</div>
                 <h3 className="text-xl font-semibold text-gray-900 mt-1">
                   Branding
                 </h3>
-                <p className="text-sm text-gray-600 mt-2">
-                  Update logo, colors, and welcome text.
-                </p>
-                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
-                  Open →
-                </span>
+                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
+                <span className="mt-4 inline-block text-gray-500">Locked</span>
               </div>
-            </Link>
+            </div>
 
-            {/* Announcements */}
-            <Link
-              href="/admin/announcements"
-              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
-            >
+            {/* Announcements - Locked */}
+            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
               <div>
                 <div className="text-sm text-gray-500">Comms</div>
                 <h3 className="text-xl font-semibold text-gray-900 mt-1">
                   Announcements
                 </h3>
-                <p className="text-sm text-gray-600 mt-2">
-                  Post a banner to the dashboard for all users.
-                </p>
-                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
-                  Open →
-                </span>
+                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
+                <span className="mt-4 inline-block text-gray-500">Locked</span>
               </div>
-            </Link>
+            </div>
           </div>
         </section>
       </Shell>

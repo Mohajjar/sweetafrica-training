@@ -43,7 +43,11 @@ export default function LessonFooter({
     nextHref = getLessonHref(moduleId, nextId);
   } else {
     // This is the last lesson. Go to recap if the module has a quiz.
-    const modulesWithQuizzes: ModuleId[] = ["welcome", "fundamentals"];
+    const modulesWithQuizzes: ModuleId[] = [
+      "welcome",
+      "fundamentals",
+      "professionalism",
+    ];
     if (modulesWithQuizzes.includes(moduleId)) {
       nextHref = `/course/${moduleId}/recap`;
     } else {
