@@ -6,6 +6,7 @@ import CourseTracker from "@/components/CourseTracker";
 import LessonFooter from "@/components/LessonFooter";
 import useAutoGate from "@/hooks/useAutoGate";
 import { getLessons } from "@/lib/modules";
+import Image from "next/image";
 
 export default function DefiningCleaning() {
   return (
@@ -44,7 +45,13 @@ export default function DefiningCleaning() {
                   {/* Image placeholder + figcaption */}
                   <figure className="my-8">
                     <div className="aspect-[16/9] w-full rounded-xl border border-gray-200 bg-gray-100 grid place-items-center text-gray-400">
-                      Image placeholder
+                      <Image
+                        src="https://images.pexels.com/photos/4239031/pexels-photo-4239031.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                        alt="Person cleaning a surface"
+                        width={1260}
+                        height={750}
+                        className="rounded-xl"
+                      />
                     </div>
                     <figcaption className="text-center text-sm text-gray-500 mt-2">
                       ― “Cleaning is the act of removing visible and invisible
@@ -86,22 +93,29 @@ export default function DefiningCleaning() {
 
                   {/* Differences Explained – placeholder for your four graphics */}
                   <div className="my-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                      Differences Explained (visuals)
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[1, 2, 3, 4].map((n) => (
-                        <div
-                          key={n}
-                          className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
-                        >
-                          Image {n}
-                        </div>
-                      ))}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Image
+                        src="https://images.pexels.com/photos/4099467/pexels-photo-4099467.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                        alt="Cleaning"
+                        width={400}
+                        height={400}
+                        className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
+                      <Image
+                        src="https://images.pexels.com/photos/7794429/pexels-photo-7794429.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                        alt="Sanitizing"
+                        width={400}
+                        height={400}
+                        className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
+                      <Image
+                        src="https://images.pexels.com/photos/4239014/pexels-photo-4239014.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                        alt="Disinfecting"
+                        width={400}
+                        height={400}
+                        className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
                     </div>
-                    <p className="text-sm text-gray-500 mt-2">
-                      (We’ll drop in the final artwork here.)
-                    </p>
                   </div>
 
                   <hr className="my-8 border-gray-200" />

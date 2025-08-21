@@ -7,6 +7,7 @@ import LessonFooter from "@/components/LessonFooter";
 import AuthGuard from "@/components/AuthGuard";
 import { getLessons } from "@/lib/modules";
 import useLessonGate from "@/hooks/useLessonGate"; // 👈 Import the hook
+import Image from "next/image";
 
 export default function BasicCleaningChemistry() {
   // 🔒 Gate: must finish "Defining Cleaning" before this lesson
@@ -57,7 +58,13 @@ export default function BasicCleaningChemistry() {
                   {/* (Optional) visual placeholder */}
                   <figure className="my-8">
                     <div className="aspect-[16/9] w-full rounded-xl border border-gray-200 bg-gray-100 grid place-items-center text-gray-400">
-                      Image placeholder — pH / product examples
+                      <Image
+                        src="/basic-cleaning-systems.webp"
+                        alt="pH scale for cleaning products"
+                        width={1024}
+                        height={576}
+                        className="rounded-xl"
+                      />
                     </div>
                     <figcaption className="text-center text-sm text-gray-500 mt-2">
                       Add a pH diagram or product lineup (we’ll swap later).

@@ -7,6 +7,7 @@ import LessonFooter from "@/components/LessonFooter";
 import useAutoGate from "@/hooks/useAutoGate";
 import useLessonGate from "@/hooks/useLessonGate";
 import { getLessons } from "@/lib/modules";
+import Image from "next/image";
 
 export default function CleaningSystemsAndFlow() {
   // Gate: must have completed "Safety and Self-Protection"
@@ -91,22 +92,6 @@ export default function CleaningSystemsAndFlow() {
                     overlooking areas while maximizing efficiency and
                     effectiveness in the cleaning process.
                   </p>
-
-                  <figure className="my-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                      Systematic Cleaning Directions
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[1, 2, 3, 4].map((n) => (
-                        <div
-                          key={n}
-                          className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
-                        >
-                          Image {n} from Screenshot
-                        </div>
-                      ))}
-                    </div>
-                  </figure>
 
                   <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-4">
                     Task Order Within a Room

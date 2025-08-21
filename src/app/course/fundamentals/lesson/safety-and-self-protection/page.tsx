@@ -7,6 +7,7 @@ import LessonFooter from "@/components/LessonFooter";
 import useAutoGate from "@/hooks/useAutoGate";
 import useLessonGate from "@/hooks/useLessonGate";
 import { getLessons } from "@/lib/modules";
+import Image from "next/image";
 
 export default function SafetyAndSelfProtection() {
   // Gate: must have completed "Tools & Supplies"
@@ -65,14 +66,34 @@ export default function SafetyAndSelfProtection() {
                       Core PPE Items for Cleaners
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[1, 2, 3, 4].map((n) => (
-                        <div
-                          key={n}
-                          className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
-                        >
-                          Image {n} from Screenshot
-                        </div>
-                      ))}
+                      <Image
+                        src="/core-ppe.jpeg"
+                        alt="Gloves"
+                        width={250}
+                        height={250}
+                        className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
+                      <Image
+                        src="/core-ppe2.jpeg"
+                        alt="Masks"
+                        width={250}
+                        height={250}
+                        className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
+                      <Image
+                        src="/core-ppe3.jpeg"
+                        alt="Goggles"
+                        width={250}
+                        height={250}
+                        className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
+                      <Image
+                        src="/core-ppe4.jpeg"
+                        alt="Protective Clothing"
+                        width={250}
+                        height={250}
+                        className="aspect-square rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
                     </div>
                   </figure>
 
@@ -115,14 +136,27 @@ export default function SafetyAndSelfProtection() {
                       Spotting Unsafe Situations
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[1, 2, 3].map((n) => (
-                        <div
-                          key={n}
-                          className="aspect-video rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
-                        >
-                          Image {n} from Screenshot
-                        </div>
-                      ))}
+                      <Image
+                        src="/spotting 2.jpeg"
+                        alt="Wet floor"
+                        width={400}
+                        height={225}
+                        className="aspect-video rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
+                      <Image
+                        src="/spotting1.jpeg"
+                        alt="Cluttered workspace"
+                        width={400}
+                        height={225}
+                        className="aspect-video rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
+                      <Image
+                        src="/spotting3.jpeg"
+                        alt="Chemical spill"
+                        width={400}
+                        height={225}
+                        className="aspect-video rounded-lg border border-gray-200 bg-gray-100 grid place-items-center text-xs text-gray-400"
+                      />
                     </div>
                   </figure>
 
