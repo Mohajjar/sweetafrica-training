@@ -45,25 +45,7 @@ export default function VerifyPage() {
 
     setSending(true);
     try {
-      const site = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-
-      try {
-        await sendEmailVerification(auth.currentUser, {
-          url: `${site}/verify`,
-        });
-      } catch (e: any) {
-        console.error("sendEmailVerification failed:", e?.code, e?.message);
-        // Fallback if domain isn’t authorized yet
-        if (
-          e?.code === "auth/invalid-continue-uri" ||
-          e?.code === "auth/unauthorized-continue-uri"
-        ) {
-          await sendEmailVerification(auth.currentUser);
-        } else {
-          throw e;
-        }
-      }
-
+      await sendEmailVerification(auth.currentUser);
       setMsg("Verification email sent. Please check your inbox (and spam).");
     } catch (e: any) {
       setErr(e?.message ?? "Failed to send verification email.");
