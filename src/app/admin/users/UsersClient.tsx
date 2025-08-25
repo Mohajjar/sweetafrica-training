@@ -146,7 +146,7 @@ function UsersTable() {
             value={qText}
             onChange={(e) => setQText(e.target.value)}
             placeholder="Search email, name, role…"
-            className="w-full rounded-xl border px-9 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full rounded-xl border px-9 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
       </header>
@@ -489,7 +489,7 @@ function AdminUserDetail({ uid, onBack }: { uid: string; onBack: () => void }) {
                 bg-gray-100 text-gray-800
                 px-3 py-2 text-sm shadow-sm
                 hover:bg-gray-200
-                focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500
+                focus:outline-none focus:ring-2 focus:ring-green-500
               "
             >
               {ALL_MODULE_IDS.map((m) => (

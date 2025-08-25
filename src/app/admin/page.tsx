@@ -19,7 +19,7 @@ export default function AdminHome() {
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Users - Active */}
+            {/* Users */}
             <Link
               href="/admin/users"
               className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
@@ -38,17 +38,24 @@ export default function AdminHome() {
               </div>
             </Link>
 
-            {/* Progress - Locked */}
-            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
+            {/* Progress */}
+            <Link
+              href="/admin/progress"
+              className="group rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition"
+            >
               <div>
                 <div className="text-sm text-gray-500">Analytics</div>
                 <h3 className="text-xl font-semibold text-gray-900 mt-1">
                   Progress
                 </h3>
-                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
-                <span className="mt-4 inline-block text-gray-500">Locked</span>
+                <p className="text-sm text-gray-600 mt-2">
+                  See completion by user or section; export CSV.
+                </p>
+                <span className="mt-4 inline-block text-green-700 group-hover:text-green-800">
+                  Open →
+                </span>
               </div>
-            </div>
+            </Link>
 
             {/* Content - Locked */}
             <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
