@@ -117,7 +117,7 @@ export default function QuizSuccessPage() {
             ) : passed ? (
               <div className="mx-auto max-w-2xl bg-white border rounded-2xl shadow-md p-8 md:p-12 text-center">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900">
-                  🎉 Congrats, {name.split("@")[0]}!
+                  🎉 Congrats, {name}!
                 </h1>
                 <p className="mt-3 text-gray-600 text-lg">
                   You passed the <span className="font-semibold">Welcome</span>{" "}
@@ -147,9 +147,9 @@ export default function QuizSuccessPage() {
               </div>
             ) : (
               // If they didn't pass, we redirect; this is a tiny fallback
-              (<div className="mx-auto max-w-xl text-center bg-white border rounded-xl shadow p-10">
+              <div className="mx-auto max-w-xl text-center bg-white border rounded-xl shadow p-10">
                 <p className="text-gray-600">Redirecting…</p>
-              </div>)
+              </div>
             )}
           </div>
         </div>

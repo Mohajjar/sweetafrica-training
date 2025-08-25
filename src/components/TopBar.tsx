@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import useIsAdmin from "@/hooks/useIsAdmin";
 
 export default function TopBar() {
-  const [email, setEmail] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const { isAdmin } = useIsAdmin();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setEmail(u?.email ?? null));
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsub();
   }, []);
 
@@ -32,9 +32,9 @@ export default function TopBar() {
             </Link>
           )}
 
-          {email && (
+          {user && (
             <span className="hidden sm:inline text-sm text-gray-700">
-              {email}
+              {user.displayName || user.email}
             </span>
           )}
 

@@ -57,42 +57,6 @@ export default function AdminHome() {
               </div>
             </Link>
 
-            {/* Content - Locked */}
-            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
-              <div>
-                <div className="text-sm text-gray-500">Lessons</div>
-                <h3 className="text-xl font-semibold text-gray-900 mt-1">
-                  Content Manager
-                </h3>
-                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
-                <span className="mt-4 inline-block text-gray-500">Locked</span>
-              </div>
-            </div>
-
-            {/* Quizzes - Locked */}
-            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
-              <div>
-                <div className="text-sm text-gray-500">Assessments</div>
-                <h3 className="text-xl font-semibold text-gray-900 mt-1">
-                  Quiz Builder
-                </h3>
-                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
-                <span className="mt-4 inline-block text-gray-500">Locked</span>
-              </div>
-            </div>
-
-            {/* Branding - Locked */}
-            <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
-              <div>
-                <div className="text-sm text-gray-500">Appearance</div>
-                <h3 className="text-xl font-semibold text-gray-900 mt-1">
-                  Branding
-                </h3>
-                <p className="text-sm text-gray-600 mt-2">Coming soon</p>
-                <span className="mt-4 inline-block text-gray-500">Locked</span>
-              </div>
-            </div>
-
             {/* Announcements - Locked */}
             <div className="group rounded-2xl border bg-gray-50 p-6 shadow-sm opacity-60">
               <div>
